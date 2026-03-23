@@ -261,7 +261,7 @@ function saveData(arr) {
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function fmt(d) { if(!d) return ""; const t=new Date(d); return `${t.getFullYear()}/${String(t.getMonth()+1).padStart(2,"0")}/${String(t.getDate()).padStart(2,"0")}`; }
 function fmtS(d) { if(!d) return ""; const t=new Date(d); return `${String(t.getMonth()+1).padStart(2,"0")}/${String(t.getDate()).padStart(2,"0")}`; }
-function daysTo(s) { if(!s) return Infinity; const t=new Date(); t.setHours(0,0,0,0); return Math.ceil((new Date(s)-t)/864e5); }
+function daysTo(s) { if(!s) return Infinity; const t=new Date(); t.setHours(0,0,0,0); const d=new Date(s+'T00:00:00'); return Math.round((d-t)/864e5); }
 function nextRef(p) { if(!p.refillSchedule?.length) return null; const u=p.usedRefills||0; return u>=p.refillSchedule.length?null:p.refillSchedule[u]; }
 function hasChronic(p) { return (p.prescriptions||[]).some(rx=>rx.isChronic); }
 function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
