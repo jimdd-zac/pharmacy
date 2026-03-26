@@ -311,17 +311,36 @@ function ordRenameAll(){
 function ordRenameSingle(){
   const p=S._pendingSave;if(!p)return;
   document.getElementById('rename-modal')?.remove();
-  // Reset stock: use what user entered in the form (p.data.stock), not inherited chain value
-  const formStock=(document.getElementById('of-stock')?.value||'').trim();
+  // Show modal to re-enter stock and qty
+  const oldItem=S.orders.find(i=>i.id===p.id);
+  document.body.insertAdjacentHTML('beforeend',`<div class="overlay" id="restock-modal" onclick="event.stopPropagation()"><div class="modal" onclick="event.stopPropagation()" style="text-align:left"><h3 style="font-size:17px;font-weight:600;margin-bottom:12px;text-align:center">「${esc(p.name)}」獨立設定</h3><div style="margin-bottom:10px"><label class="lbl">原庫存</label><input id="rs-stock" class="inp" type="number" inputmode="numeric" value="" placeholder="重新輸入庫存量"></div><div style="margin-bottom:10px"><label class="lbl">叫貨量</label><input id="rs-qty" class="inp" type="number" inputmode="numeric" value="" placeholder="重新輸入叫貨量"></div><div style="margin-bottom:10px"><label class="lbl">搭贈</label><input id="rs-bonus" class="inp" type="number" inputmode="numeric" value="" placeholder="選填"></div><div style="display:flex;gap:8px;margin-top:14px"><button class="btn-blue" style="flex:1" onclick="ordRenameSingleConfirm()">確認</button><button class="btn-gray" style="flex:1" onclick="ordRenameSingleSkip()">沿用原數據</button></div></div></div>`);
+}
+function ordRenameSingleConfirm(){
+  const p=S._pendingSave;if(!p)return;
+  document.getElementById('restock-modal')?.remove();
+  const newStock=(document.getElementById('rs-stock')?.value||'').trim();
+  const newQty=(document.getElementById('rs-qty')?.value||'').trim();
+  const newBonus=(document.getElementById('rs-bonus')?.value||'').trim();
   S.orders=S.orders.map(i=>{
     if(i.id!==p.id)return i;
     const updated={...i,...p.data,updatedAt:now()};
-    // Clear chain-inherited values so it starts fresh
-    updated.stock=formStock||'0';
-    updated.currentStock=null;
-    updated._origStock=null;
-    updated._groupCurrentStock=null;
-    updated._hasArrived=false;
+    updated.stock=newStock||'0';
+    if(newQty)updated.qty=newQty;
+    if(newBonus)updated.bonus=newBonus;
+    updated.currentStock=null;updated._origStock=null;updated._groupCurrentStock=null;updated._hasArrived=false;
+    return updated;
+  });
+  recalcChain(p.name);recalcChain(p.oldName);
+  persistOrd(S.orders);showToast('已獨立設定');
+  S.oView='list';S.oEdit=null;S._pendingSave=null;render();
+}
+function ordRenameSingleSkip(){
+  const p=S._pendingSave;if(!p)return;
+  document.getElementById('restock-modal')?.remove();
+  S.orders=S.orders.map(i=>{
+    if(i.id!==p.id)return i;
+    const updated={...i,...p.data,updatedAt:now()};
+    updated.currentStock=null;updated._origStock=null;updated._groupCurrentStock=null;updated._hasArrived=false;
     return updated;
   });
   recalcChain(p.name);recalcChain(p.oldName);
@@ -331,18 +350,18 @@ function ordRenameSingle(){
 function render(){const app=document.getElementById('app'),wf=document.activeElement?.id;let h='';if(S.module==='home')h=renderHome();else if(S.module==='rx'){if(S.view==='list')h=renderRxList();else if(S.view==='detail')h=renderRxDet();else h=renderRxForm();}else{if(S.oView==='list')h=renderOrdList();else h=renderOrdForm();}app.innerHTML=h;
 const si=document.getElementById('search-inp');
 if(si){
-  si.addEventListener('input',function(){
-    S.search=this.value;
-    rxUpdateList();
-  });
+  let composing=false;
+  si.addEventListener('compositionstart',()=>{composing=true;});
+  si.addEventListener('compositionend',function(){composing=false;S.search=this.value;rxUpdateList();});
+  si.addEventListener('input',function(){if(!composing){S.search=this.value;rxUpdateList();}});
   if(wf==='search-inp'){si.focus();si.setSelectionRange(si.value.length,si.value.length);}
 }
 const oi=document.getElementById('o-search');
 if(oi){
-  oi.addEventListener('input',function(){
-    S.oSearch=this.value;
-    ordUpdateList();
-  });
+  let oComposing=false;
+  oi.addEventListener('compositionstart',()=>{oComposing=true;});
+  oi.addEventListener('compositionend',function(){oComposing=false;S.oSearch=this.value;ordUpdateList();});
+  oi.addEventListener('input',function(){if(!oComposing){S.oSearch=this.value;ordUpdateList();}});
   if(wf==='o-search'){oi.focus();oi.setSelectionRange(oi.value.length,oi.value.length);}
 }
 if(wf!=='search-inp'&&wf!=='o-search')window.scrollTo(0,0);
