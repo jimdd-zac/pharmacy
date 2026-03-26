@@ -6,834 +6,286 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="藥局管理">
-<title>💊 藥局客人管理</title>
+<title>藥局管理</title>
 <style>
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-  body{font-family:'Noto Sans TC',-apple-system,sans-serif;background:#F5F3EE;color:#1A1A1A;min-height:100vh;max-width:520px;margin:0 auto}
-  input,textarea,select{font-family:inherit;font-size:14px}
-  button{font-family:inherit;cursor:pointer;border:none;outline:none}
-
-  /* Colors */
-  :root{
-    --bg:#F5F3EE;--card:#fff;--pri:#1B6B4A;--pl:#2D9D6F;--pp:#DFF5E8;
-    --acc:#D95D39;--al:#F0A07A;--text:#1A1A1A;--ts:#7A7A6E;--bdr:#E4E0D8;
-    --dng:#C0392B;--dbg:#FEF0EE;--wrn:#E67E22;--wbg:#FFF8EE;--ok:#1B6B4A;--okbg:#E8F6EE;
-  }
-
-  .header{background:linear-gradient(135deg,#1B6B4A,#2D9D6F);padding:22px 16px 16px;color:#fff;border-radius:0 0 22px 22px}
-  .header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-  .header-label{font-size:10px;font-weight:600;letter-spacing:2px;opacity:.7;margin-bottom:2px}
-  .header-title{font-size:21px;font-weight:800;margin:0}
-  .header-sub{margin:5px 0 12px;opacity:.8;font-size:11px}
-  .header-btns{display:flex;gap:5px;flex-shrink:0}
-  .hbtn{display:flex;align-items:center;gap:5px;padding:7px 10px;background:rgba(255,255,255,.2);color:#fff;border-radius:9px;font-size:12px;font-weight:700}
-  .hbtn.accent{background:rgba(255,255,255,.3)}
-  .search-bar{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.18);border-radius:12px;padding:0 14px}
-  .search-bar input{flex:1;background:none;border:none;padding:11px 0;color:#fff;font-size:15px;outline:none}
-  .search-bar input::placeholder{color:rgba(255,255,255,.6)}
-  .clear-btn{background:none;color:#fff;font-size:16px;padding:4px}
-
-  .card{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);padding:13px}
-  .inp{width:100%;padding:10px 12px;border:1px solid var(--bdr);border-radius:10px;font-size:14px;background:#FAFAF7;outline:none}
-  .inp:focus{border-color:var(--pri)}
-  .lbl{font-size:12px;font-weight:700;color:var(--ts);margin-bottom:3px;display:block}
-
-  .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;border-radius:10px;padding:9px 14px}
-  .btn-pri{background:var(--pri);color:#fff}
-  .btn-sec{background:#eee;color:var(--text)}
-  .btn-dng{background:var(--dbg);color:var(--dng)}
-  .btn-ghost{background:none;color:var(--pri);padding:4px}
-
-  .badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;display:inline-block}
-  .badge-line{background:#06C755;color:#fff}
-  .badge-phone{background:#4A90D9;color:#fff}
-  .badge-chronic{background:var(--al);color:#fff}
-  .badge-general{background:var(--pp);color:var(--pri)}
-
-  .refill-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;display:inline-flex;align-items:center;gap:3px}
-
-  .section-title{font-size:14px;font-weight:700;margin:14px 0 8px}
-
-  /* Toast */
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:9999;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s}
-  .toast.show{opacity:1}
-
-  /* Modal overlay */
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;display:flex;align-items:center;justify-content:center;padding:20px}
-  .modal{background:#fff;border-radius:16px;padding:24px;max-width:320px;width:100%;text-align:center}
-  .sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;display:flex;align-items:flex-end;justify-content:center}
-  .sheet-inner{background:#fff;border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
-
-  /* Timeline */
-  .tl-dot{border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-  .tl-line{width:2px;flex:1}
-
-  /* Patient list item */
-  .patient-item{display:flex;align-items:center;gap:12px;padding:13px;background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);cursor:pointer;border:none;width:100%;text-align:left}
-  .avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#DFF5E8,#E4E0D8);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#1B6B4A}
-
-  /* Urgent */
-  .urgent-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:13px;margin-bottom:5px}
-
-  /* RxForm */
-  .rx-card{padding:14px;border-radius:10px;border:1px solid var(--bdr);position:relative;background:#FAFAF7;margin-bottom:8px}
-  .rx-card.review{background:#FFFDE7;border-color:#FFD54F}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-
-  /* Contact method btns */
-  .contact-btns{display:flex;gap:8px;flex-wrap:wrap}
-  .contact-btn{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;border:1px solid var(--bdr);background:#F0F0EC;color:var(--ts);cursor:pointer}
-  .contact-btn.active{border:none;color:#fff}
-
-  /* Schedule editor */
-  .sched-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-
-  /* Progress bar */
-  .prog-bar{height:5px;background:#E0DDD5;border-radius:3px;overflow:hidden;margin-bottom:2px}
-  .prog-fill{height:100%;background:linear-gradient(90deg,#1B6B4A,#2D9D6F);border-radius:3px;transition:width .3s}
-
-  /* Import panel */
-  .imp-panel{margin:12px 16px 0;padding:16px;background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);border:2px solid var(--pri)}
-
-  /* Page transitions */
-  #app > div{animation:fadeIn .15s ease}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-
-  .flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-6{gap:6px}.gap-8{gap:8px}.gap-10{gap:10px}.flex-1{flex:1}.flex-col{flex-direction:column}.wrap{flex-wrap:wrap}
-  .p-16{padding:16px}.pb-24{padding-bottom:24px}.mt-8{margin-top:8px}.mb-8{margin-bottom:8px}.mb-14{margin-bottom:14px}.mb-18{margin-bottom:18px}
-  .text-center{text-align:center}.bold{font-weight:700}.italic{font-style:italic}
-  .empty{text-align:center;padding:36px;color:var(--ts)}
-  .empty-icon{font-size:44px;margin-bottom:10px}
-  .list-gap{display:flex;flex-direction:column;gap:7px}
-
-  .back-bar{padding:14px 16px 6px;display:flex;align-items:center;gap:10px}
-  .back-bar span{font-size:15px;font-weight:600;flex:1}
-  .profile-center{text-align:center;padding:10px 20px 14px}
-  .profile-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 10px;background:linear-gradient(135deg,#DFF5E8,#E4E0D8);border:3px solid #1B6B4A;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#1B6B4A}
-  .rx-block{padding:12px;background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:8px}
-  .rx-block.chronic{border-left:4px solid var(--acc)}
-  .rx-block.general{border-left:4px solid var(--pri)}
-  .prog-box{padding:12px;background:#F9F8F4;border-radius:12px;margin-bottom:16px}
-
-  .save-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;background:linear-gradient(135deg,#1B6B4A,#2D9D6F);color:#fff;border-radius:12px;font-size:15px;font-weight:800;border:none;cursor:pointer;margin-top:4px}
-
-  .tab-btns{display:flex;gap:8px;margin-bottom:14px}
-  .tab-btn{flex:1;padding:8px 0;border-radius:8px;font-size:13px;font-weight:700;border:none;cursor:pointer}
-
-  /* Scrollable content */
-  .scroll-content{overflow-y:auto;flex:1;padding-bottom:env(safe-area-inset-bottom)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+body{font-family:'Noto Sans TC',-apple-system,'Helvetica Neue',sans-serif;background:#ffffff;color:#000000;min-height:100vh;max-width:520px;margin:0 auto;-webkit-font-smoothing:antialiased}
+input,textarea,select{font-family:inherit;font-size:16px;color:#000000}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+:root{--bg:#f2f2f7;--bg2:#ffffff;--card:#FFF;--sep:rgba(60,60,67,0.18);--sepL:rgba(60,60,67,0.08);--lb:rgba(60,60,67,0.48);--sec:rgba(60,60,67,0.72);--tx:#000000;--blue:#007AFF;--green:#34C759;--orange:#FF9500;--red:#FF3B30;--purple:#AF52DE;--yellow:#FFCC00;--teal:#5AC8FA;--indigo:#5856D6;--blueBg:rgba(0,122,255,0.10);--greenBg:rgba(52,199,89,0.12);--orangeBg:rgba(255,149,0,0.12);--redBg:rgba(255,59,48,0.10);--purpleBg:rgba(175,82,222,0.10)}
+.home-top{padding:52px 20px 22px;text-align:center;background:linear-gradient(135deg,#1B6B4A,#2D9D6F);border-radius:0 0 22px 22px;color:#fff}.home-top h1{font-size:36px;font-weight:900;letter-spacing:-.5px;color:#fff;text-align:center}.home-top p{font-size:14px;color:rgba(255,255,255,.75);margin-top:4px}
+.home-cards{padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px;background:var(--bg)}
+.hcard{background:var(--bg2);border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;transition:transform .12s;box-shadow:0 1px 3px rgba(0,0,0,.10)}.hcard:active{transform:scale(.97)}
+.hcard-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.hcard-icon.rx{background:linear-gradient(135deg,#FF3B30,#FF6259)}.hcard-icon.ord{background:linear-gradient(135deg,#007AFF,#5AC8FA)}
+.hcard-body{flex:1}.hcard-title{font-size:17px;font-weight:600}.hcard-desc{font-size:13px;color:var(--lb);margin-top:2px}
+.hcard-stat{display:inline-block;margin-top:6px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px}
+.hcard-arrow{color:var(--sep);font-size:20px}
+.nav{padding:12px 16px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.88);border-bottom:1px solid var(--sepL);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);position:sticky;top:0;z-index:100}
+.nav-title{font-size:17px;font-weight:600;flex:1}.nav-btn{font-size:15px;font-weight:500;color:var(--blue);background:none;padding:4px}
+.nav-back{display:flex;align-items:center;gap:2px;font-size:15px;font-weight:500;color:var(--blue);background:none;padding:4px}
+.section{padding:0 16px;margin-bottom:16px}.section-label{font-size:13px;font-weight:700;color:var(--lb);text-transform:uppercase;padding:8px 4px 6px;letter-spacing:1px}
+.s-card{background:var(--bg2);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.10)}
+.s-row{padding:12px 16px;display:flex;align-items:center;gap:12px;min-height:44px}.s-row+.s-row{border-top:1px solid var(--sepL)}
+.inp{width:100%;padding:11px 14px;border:1px solid var(--sepL);border-radius:10px;font-size:16px;background:var(--card);outline:none;transition:border .2s}.inp:focus{border-color:var(--blue)}
+.lbl{font-size:13px;font-weight:500;color:var(--lb);margin-bottom:4px;display:block}
+.btn-blue{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--blue);color:#fff;font-size:15px;font-weight:600;border-radius:10px;padding:10px 18px}.btn-blue:active{opacity:.8}
+.btn-gray{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--sepL);color:var(--tx);font-size:15px;font-weight:600;border-radius:10px;padding:10px 18px}
+.btn-ghost{background:none;color:var(--blue);padding:4px;font-size:15px;font-weight:500}
+.badge{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;display:inline-block}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(28,28,30,.88);color:#fff;padding:10px 22px;border-radius:22px;font-size:14px;font-weight:600;z-index:9999;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;backdrop-filter:blur(10px)}.toast.show{opacity:1}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:900;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal{background:var(--card);border-radius:14px;padding:24px;max-width:300px;width:100%;text-align:center}
+.p-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);cursor:pointer}.p-item+.p-item{border-top:1px solid var(--sepL)}
+.p-avatar{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;color:#fff}
+.refill-pill{font-size:12px;font-weight:600;padding:2px 8px;border-radius:10px;display:inline-flex;align-items:center;gap:3px}
+.tl-dot{border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}.tl-line{width:2px;flex:1}
+.rx-block{padding:12px 16px}.rx-block+.rx-block{border-top:1px solid var(--sepL)}
+.form-group{margin-bottom:16px}.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.contact-btns{display:flex;gap:8px;flex-wrap:wrap}.contact-btn{padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;background:var(--sepL);color:var(--sec)}.contact-btn.on{background:var(--blue);color:#fff}
+.rx-form-card{padding:14px;border-radius:10px;border:1px solid var(--sepL);background:#FAFAFA;margin-bottom:8px;position:relative}
+.sched-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.save-btn{width:100%;padding:14px;background:var(--blue);color:#fff;border-radius:12px;font-size:17px;font-weight:600;border:none;margin-top:8px}.save-btn:active{opacity:.8}
+.del-btn{width:100%;padding:12px;background:var(--redBg);color:var(--red);border-radius:12px;font-size:15px;font-weight:600;border:none;margin-top:8px}
+.imp-panel{margin:0 16px;padding:16px;background:var(--card);border-radius:12px;margin-bottom:12px}
+.prog-bar{height:4px;background:var(--sepL);border-radius:2px;overflow:hidden}.prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
+.prog-box{padding:14px;background:#FAFAFA;border-radius:12px;margin:12px 0}
+.search-box{margin:0 16px 10px;position:relative}.search-box svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--lb)}.search-box input{width:100%;padding:10px 12px 10px 38px;border-radius:10px;border:none;background:var(--card);font-size:15px;outline:none}.search-box input::placeholder{color:var(--sep)}.search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--sep);color:#fff;width:18px;height:18px;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center}
+.o-stat-bar{display:flex;gap:1px;margin:12px 16px;background:var(--sepL);border-radius:12px;overflow:hidden}.o-stat-item{flex:1;padding:10px 4px;text-align:center;background:var(--card)}.o-stat-item .num{font-size:20px;font-weight:700}.o-stat-item .lbl{font-size:11px;color:var(--lb);margin-top:1px}
+.o-card{background:var(--card);padding:14px 16px}.o-card+.o-card{border-top:1px solid var(--sepL)}
+.o-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:600}
+.o-status-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;flex-shrink:0}
+.o-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.o-action{background:none;color:var(--blue);padding:4px 8px;font-size:13px;font-weight:500}.o-action.red{color:var(--red)}
+.o-fab{position:fixed;bottom:24px;right:16px;z-index:50;display:flex;flex-direction:column;gap:10px}.o-fab button{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.o-import{margin:0 16px 12px;padding:14px;background:var(--card);border-radius:12px}
+.o-sup-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.o-sup-btns button{padding:8px 4px;font-size:13px;border-radius:8px;font-weight:500;background:var(--sepL);color:var(--sec);border:2px solid transparent}.o-sup-btns button.on{background:#F5E6D3;color:#8B5E3C;border-color:#8B5E3C}
+.o-stat-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.o-stat-btns button{padding:8px 4px;font-size:13px;border-radius:8px;font-weight:500;background:var(--sepL);color:var(--sec);border:2px solid transparent}
+#app>div{animation:fadeIn .2s ease}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
 <div id="app"></div>
-
 <div class="toast" id="toast"></div>
-
 <script>
-// ══════════════════════════════════════════
-// DATA & STORAGE
-// ══════════════════════════════════════════
-const STORAGE_KEY = 'pharmacy-v2';
-const SEED_DATA = [
-  {
-    id:"mg4k2abc1", name:"王志鋒", phone:"", contactMethod:"",
-    notes:"慢性自發性高血壓、混合性高脂血症。給藥28天。",
-    refillSchedule:[
-      {refillNumber:1,startDate:"2026-03-17",endDate:"2026-03-23"},
-      {refillNumber:2,startDate:"2026-04-14",endDate:"2026-04-20"},
-      {refillNumber:3,startDate:"2026-05-12",endDate:"2026-05-18"}
-    ],
-    usedRefills:0,
-    prescriptions:[
-      {name:"Linicor 500/20mg",dosage:"1.00 QDPC",isChronic:true,note:"AC57216100"},
-      {name:"Pravafen 40/160mg",dosage:"1.00 QD",isChronic:true,note:"BC26169100"},
-      {name:"Exforge HCT 10/160mg",dosage:"1.00 QDPC",isChronic:true,note:"BC25421100"}
-    ]
-  },
-  {
-    id:"mg4k2abc2", name:"商嘉宜", phone:"07-34****8", contactMethod:"",
-    notes:"免疫風濕科，診斷L93.1。1997/02生，女。高雄榮總。",
-    refillSchedule:[
-      {refillNumber:1,startDate:"2026-02-09",endDate:"2026-02-09"},
-      {refillNumber:2,startDate:"2026-02-28",endDate:"2026-03-09"},
-      {refillNumber:3,startDate:"2026-03-28",endDate:"2026-04-06"}
-    ],
-    usedRefills:1,
-    prescriptions:[
-      {name:"Fexofenadine Tab 60mg",dosage:"1# PO BIDPRN",isChronic:true,note:"AC571271G0"},
-      {name:"Plaquenil F.C.Tab 200mg",dosage:"1# PO BID",isChronic:true,note:"BC223761G0"}
-    ]
-  },
-  {
-    id:"mg4k2abc3", name:"徐坤田", phone:"07-3739496", contactMethod:"",
-    notes:"男，1948/01/26生。診斷I10、E7849、E119。給藥14天。",
-    refillSchedule:[
-      {refillNumber:1,startDate:"2026-03-06",endDate:"2026-03-20"},
-      {refillNumber:2,startDate:"2026-03-20",endDate:"2026-04-03"},
-      {refillNumber:3,startDate:"2026-04-03",endDate:"2026-04-17"},
-      {refillNumber:4,startDate:"2026-04-17",endDate:"2026-05-01"}
-    ],
-    usedRefills:1,
-    prescriptions:[
-      {name:"Exforge 5/160mg",dosage:"1# PO QD",isChronic:true,note:"AC59821100"},
-      {name:"ALAT 10MG nifedipine",dosage:"1# PO PRN",isChronic:true,note:"AC32801100"}
-    ]
-  },
-  {
-    id:"mg4k2abc4", name:"周幸婵", phone:"07-3121101", contactMethod:"",
-    notes:"女，1970/09/25生。診斷K2100、K270、K90、K64H、Z800。高雄醫學大學附設中和紀念醫院。慢箋共4次。",
-    refillSchedule:[
-      {refillNumber:1,startDate:"2025-12-31",endDate:"2026-01-10"},
-      {refillNumber:2,startDate:"2026-01-31",endDate:"2026-02-10"},
-      {refillNumber:3,startDate:"2026-03-01",endDate:"2026-03-11"},
-      {refillNumber:4,startDate:"2026-04-01",endDate:"2026-04-10"}
-    ],
-    usedRefills:3,
-    prescriptions:[
-      {name:"Kascoal 40mg",dosage:"2# Tab BID",isChronic:true,note:"A029828100"},
-      {name:"Oxethaine 複方",dosage:"2# Tab BID",isChronic:true,note:"AC20291G0"},
-      {name:"Nidolium 10mg",dosage:"2# Tab BID",isChronic:true,note:"AC32619IG0"},
-      {name:"Nexium 錠 40mg",dosage:"1# Tab QD",isChronic:true,note:"BC23221100"},
-      {name:"Algitab 咀嚼錠 複方",dosage:"1# Tab PRN",isChronic:true,note:"A031800100"}
-    ]
-  },
-  {
-    id:"mg4k2abc5", name:"林建豐", phone:"", contactMethod:"",
-    notes:"男，1956/06生。身心科，診斷F43.21。高雄市立聯合醫院。",
-    refillSchedule:[
-      {refillNumber:1,startDate:"2026-03-11",endDate:"2026-03-11"},
-      {refillNumber:2,startDate:"2026-03-30",endDate:"2026-04-08"},
-      {refillNumber:3,startDate:"2026-04-27",endDate:"2026-05-06"}
-    ],
-    usedRefills:1,
-    prescriptions:[
-      {name:"Rivotril 2mg (Clonazepam)",dosage:"1# Tab PO HS",isChronic:true,note:"BC030781G0"},
-      {name:"U-Zepine 30mg (Mirtazapine)",dosage:"1# Tab PO HS",isChronic:true,note:"AC48633100"}
-    ]
-  },
-  {
-    id:"mg4k2abc6", name:"劉昭明", phone:"0937568490", contactMethod:"",
-    notes:"男，1943/10/25生。腦神經外科，診斷I610、I10、F0280等。長庚紀念醫院。過敏：Clonazepam、Zolpidem。",
-    refillSchedule:[
-      {refillNumber:1,startDate:"2025-06-19",endDate:"2025-07-17"},
-      {refillNumber:2,startDate:"2025-07-17",endDate:"2025-08-04"},
-      {refillNumber:3,startDate:"2025-08-04",endDate:"2025-08-14"}
-    ],
-    usedRefills:3,
-    prescriptions:[
-      {name:"Terazosin HCl 2mg",dosage:"1# HS PO",isChronic:true,note:"AC431881G0"},
-      {name:"Bisoprolol 5mg (Concor)",dosage:"1# QD PO",isChronic:true,note:"BC171251G0"},
-      {name:"Twynsta 80/5 (Telmisartan+Amlodipine)",dosage:"1# QD PO",isChronic:true,note:"BC25446100"}
-    ]
-  },
-  {
-    id:"mg4k2abc7", name:"曾國勝", phone:"3726360", contactMethod:"",
-    notes:"男，1957/07/15生。骨科，診斷P14.3、M62.89。義大大昌醫院。",
-    refillSchedule:[
-      {refillNumber:1,startDate:"2026-02-05",endDate:"2026-03-05"},
-      {refillNumber:2,startDate:"2026-03-05",endDate:"2026-04-02"}
-    ],
-    usedRefills:1,
-    prescriptions:[
-      {name:"Alinamin-F50 50mg",dosage:"1# TAB TID",isChronic:true,note:"NC040851G0"},
-      {name:"Etoricoxib 60mg (Etor)",dosage:"1# TAB QD",isChronic:true,note:"AC60188100"},
-      {name:"Tizanidine 2mg (Stidine)",dosage:"1# TAB HS",isChronic:true,note:"AC455411G0"},
-      {name:"Tramadol+Acetaminophen (Utraphen)",dosage:"1# TAB QDHS",isChronic:true,note:"AC57777100"}
-    ]
-  }
-];
-
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch(e) {}
-  // First time: start empty
-  return [];
-}
-function saveData(arr) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch(e) {}
-}
-
-// ══════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-function fmt(d) { if(!d) return ""; const t=new Date(d); return `${t.getFullYear()}/${String(t.getMonth()+1).padStart(2,"0")}/${String(t.getDate()).padStart(2,"0")}`; }
-function fmtS(d) { if(!d) return ""; const t=new Date(d); return `${String(t.getMonth()+1).padStart(2,"0")}/${String(t.getDate()).padStart(2,"0")}`; }
-function daysTo(s) { if(!s) return Infinity; const t=new Date(); t.setHours(0,0,0,0); const d=new Date(s+'T00:00:00'); return Math.round((d-t)/864e5); }
-function nextRef(p) { if(!p.refillSchedule?.length) return null; const u=p.usedRefills||0; return u>=p.refillSchedule.length?null:p.refillSchedule[u]; }
-function hasChronic(p) { return (p.prescriptions||[]).some(rx=>rx.isChronic); }
-function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2000);
-}
-
-function svgIcon(d, s=20) {
-  return `<svg width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="${d}"/></svg>`;
-}
-const ISearch = svgIcon("M21 21l-4.35-4.35M11 3a8 8 0 100 16 8 8 0 000-16z");
-const IPlus   = svgIcon("M12 5v14M5 12h14");
-const IBack   = svgIcon("M19 12H5M12 19l-7-7 7-7");
-const ITrash  = svgIcon("M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6", 16);
-const IEdit   = svgIcon("M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z", 16);
-const IImp    = svgIcon("M12 3v12m0 0l-4-4m4 4l4-4M4 15v2a2 2 0 002 2h12a2 2 0 002-2v-2");
-const IAlert  = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>`;
-const IUndo   = svgIcon("M3 7v6h6M3 13a9 9 0 0115.36-6.36L21 9", 16);
-const IChk    = `<svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>`;
-
-// ══════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════
-let state = {
-  patients: loadData(),
-  view: 'list',       // list | detail | form
-  sel: null,          // selected patient id
-  form: null,         // form object
-  search: '',
-  showImp: false,
-  impTxt: '',
-  impMsg: '',
-  isReview: false,
-  delTarget: null,
-  showBak: false,
-  bakTab: 'export',
-  undoStack: [],
-};
-
-function persist(newP) {
-  state.undoStack.push(JSON.stringify(state.patients));
-  if (state.undoStack.length > 20) state.undoStack.shift();
-  state.patients = newP;
-  saveData(newP);
-  render();
-}
-function doUndo() {
-  if (!state.undoStack.length) return;
-  state.patients = JSON.parse(state.undoStack.pop());
-  saveData(state.patients);
-  if (state.sel) {
-    const u = state.patients.find(p=>p.id===state.sel);
-    if (!u) { state.sel=null; state.view='list'; }
-  }
-  showToast("↩️ 已復原"); render();
-}
-
-// ══════════════════════════════════════════
-// COMPONENTS (HTML strings)
-// ══════════════════════════════════════════
-function refillBadgeHTML(p) {
-  if (!hasChronic(p)) return '';
-  const n = nextRef(p);
-  if (!n) return `<span class="refill-badge" style="color:var(--ts);background:#eee">已領完</span>`;
-  const d = daysTo(n.startDate);
-  let bg, color, label;
-  if (d < 0)      { bg='var(--dbg)'; color='var(--dng)'; label='可領藥中'; }
-  else if (d <= 3){ bg='var(--wbg)'; color='var(--wrn)'; label=d===0?'今天可領':d+'天後可領'; }
-  else            { bg='var(--okbg)';color='var(--ok)';  label=d+'天後可領'; }
-  return `<span class="refill-badge" style="color:${color};background:${bg}">${d<=3?IAlert:''}${esc(label)}</span>`;
-}
-
-function contactBadgeHTML(method) {
-  if (!method) return '';
-  if (method==='line')  return `<span class="badge badge-line">LINE</span>`;
-  if (method==='phone') return `<span class="badge badge-phone">📞 電話</span>`;
-  if (method==='both')  return `<span class="badge badge-line">LINE</span><span class="badge badge-phone" style="margin-left:4px">📞</span>`;
-  return '';
-}
-
-function timelineHTML(p) {
-  if (!p.refillSchedule?.length) return '';
-  const used = p.usedRefills||0;
-  const now = new Date(); now.setHours(0,0,0,0);
-  let html = `<div style="margin-top:8px"><div style="font-size:12px;font-weight:700;color:var(--ts);margin-bottom:6px">📅 領藥時程</div>`;
-  p.refillSchedule.forEach((s,i)=>{
-    const done=i<used, cur=i===used;
-    const st=new Date(s.startDate), en=s.endDate?new Date(s.endDate):null;
-    const inW=cur&&st<=now&&(!en||now<=en), past=cur&&en&&now>en;
-    const dotColor = done?'#1B6B4A':inW?'#D95D39':past?'#C0392B':cur?'#E67E22':'#E4E0D8';
-    const dotBg = done?'#1B6B4A':'white';
-    const dotSize = done?18:14;
-    const lineColor = i<used?'#1B6B4A':'#E4E0D8';
-    let rowBg = inW?'var(--wbg)':past?'var(--dbg)':'transparent';
-    html += `<div style="display:flex;align-items:stretch;gap:10px">
-      <div style="display:flex;flex-direction:column;align-items:center;width:20px">
-        ${i>0?`<div style="width:2px;height:6px;background:${i<=used?'#1B6B4A':'#E4E0D8'}"></div>`:''}
-        <div class="tl-dot" style="width:${dotSize}px;height:${dotSize}px;background:${dotBg};border:2.5px solid ${dotColor}">${done?IChk:''}</div>
-        ${i<p.refillSchedule.length-1?`<div class="tl-line" style="background:${lineColor}"></div>`:''}
-      </div>
-      <div style="flex:1;padding:6px 10px;margin-bottom:4px;border-radius:8px;background:${rowBg};opacity:${done?0.6:1}">
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span style="font-size:13px;font-weight:${done?400:700};text-decoration:${done?'line-through':'none'};color:${done?'var(--ts)':'var(--text)'}">第 ${s.refillNumber} 次</span>
-          <span style="font-size:13px;color:${done?'var(--ts)':'var(--text)'}">${esc(fmt(s.startDate))}${s.endDate?' — '+fmt(s.endDate):''}</span>
-          ${done?`<span style="font-size:10px;color:var(--pri);font-weight:600">✓ 已領</span>`:''}
-          ${inW?`<span style="font-size:10px;font-weight:700;color:var(--acc);background:#fff3e6;padding:1px 6px;border-radius:6px">← 現在可領</span>`:''}
-          ${past?`<span style="font-size:10px;font-weight:700;color:var(--dng)">逾期未領</span>`:''}
-        </div>
-      </div>
-    </div>`;
-  });
-  html += '</div>';
-  return html;
-}
-
-// ══════════════════════════════════════════
-// VIEWS
-// ══════════════════════════════════════════
-function renderList() {
-  const s = state;
-  const filtered = s.patients.filter(p=>
-    p.name.toLowerCase().includes(s.search.toLowerCase())||
-    (p.prescriptions||[]).some(rx=>(rx.name||"").toLowerCase().includes(s.search.toLowerCase()))
-  );
-  const urgent = s.patients.filter(p=>hasChronic(p))
-    .map(p=>{ const n=nextRef(p); return n?{p,d:daysTo(n.startDate),n}:null; })
-    .filter(Boolean).filter(r=>r.d<=7).sort((a,b)=>a.d-b.d);
-
-  const undoDisabled = !s.undoStack.length;
-
-  let html = `
-  <div>
-    <div class="header">
-      <div class="header-top">
-        <div>
-          <div class="header-label">PHARMACY</div>
-          <h1 class="header-title">💊 藥局客人管理</h1>
-        </div>
-        <div class="header-btns">
-          <button class="hbtn" onclick="doUndo()" ${undoDisabled?'disabled style="opacity:.3"':''}>${IUndo} 復原</button>
-          <button class="hbtn" onclick="toggleImp()">${IImp} 匯入</button>
-        </div>
-      </div>
-      <p class="header-sub">傳照片給 Claude → 複製 JSON → 匯入</p>
-      <div class="search-bar">
-        ${ISearch}
-        <input id="search-inp" type="text" inputmode="search" placeholder="搜尋姓名或藥品…" value="${esc(s.search)}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-        ${s.search?`<button class="clear-btn" onclick="clearSearch()">✕</button>`:''}
-      </div>
-    </div>
-
-    ${s.showImp?`
-    <div class="imp-panel">
-      <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--pri)">📋 貼上 JSON</div>
-      <textarea id="imp-txt" class="inp" rows="5" style="font-family:monospace;font-size:12px;resize:vertical" placeholder="貼上 Claude 給的 JSON…">${esc(s.impTxt)}</textarea>
-      ${s.impMsg?`<div style="margin-top:6px;font-size:13px;font-weight:600;color:var(--dng)">${esc(s.impMsg)}</div>`:''}
-      <div class="flex gap-8" style="margin-top:10px">
-        <button class="btn btn-pri" style="flex:1;justify-content:center" onclick="handleImport()">匯入並確認</button>
-        <button class="btn btn-sec" onclick="closeImp()">關閉</button>
-      </div>
-    </div>`:''}
-
-    ${!s.search&&urgent.length?`
-    <div id="urgent-section" style="padding:14px 16px 0">
-      <div style="font-size:12px;font-weight:700;color:var(--acc);margin-bottom:6px;display:flex;align-items:center;gap:4px">${IAlert} 近期需領藥</div>
-      ${urgent.slice(0,5).map(r=>`
-        <div class="urgent-item" style="background:${r.d<0?'var(--dbg)':'var(--wbg)'}" onclick="goDetail('${r.p.id}')">
-          <div><strong>${esc(r.p.name)}</strong><div style="font-size:11px;color:var(--ts);margin-top:1px">${esc(fmtS(r.n.startDate))}~${esc(fmtS(r.n.endDate))}</div></div>
-          ${refillBadgeHTML(r.p)}
-        </div>`).join('')}
-    </div>`:''}
-
-    <div class="p-16">
-      <div class="flex justify-between items-center mb-8">
-        <span id="patient-count" style="font-size:12px;color:var(--ts)">${filtered.length} 位客人</span>
-        <button class="btn btn-pri" onclick="goNewForm()">${IPlus} 手動新增</button>
-      </div>
-      <div id="patient-list">${!filtered.length?`
-        <div class="empty">
-          <div class="empty-icon">${s.search?'🔍':'👋'}</div>
-          <p>${s.search?'找不到符合的客人':'尚無客人資料'}</p>
-        </div>`:`
-        <div class="list-gap">
-          ${filtered.map(p=>`
-            <button class="patient-item" onclick="goDetail('${p.id}')">
-              <div class="avatar">${esc((p.name||"?")[0])}</div>
-              <div style="flex:1;min-width:0">
-                <div class="flex items-center gap-6 wrap">${esc(p.name)} ${contactBadgeHTML(p.contactMethod)}</div>
-                <div style="font-size:12px;color:var(--ts);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((p.prescriptions||[]).map(rx=>rx.name).filter(Boolean).join('、'))||'尚無處方'}</div>
-                <div style="margin-top:3px">${hasChronic(p)?refillBadgeHTML(p):''}</div>
-              </div>
-              <span style="color:var(--ts);font-size:18px">›</span>
-            </button>`).join('')}
-        </div>`}
-      </div>
-    </div>
-  </div>`;
-  return html;
-}
-
-function renderDetail() {
-  const p = state.patients.find(x=>x.id===state.sel);
-  if (!p) { state.view='list'; return renderList(); }
-  const chronicRxs = (p.prescriptions||[]).filter(rx=>rx.isChronic);
-  const generalRxs = (p.prescriptions||[]).filter(rx=>!rx.isChronic);
-  const total=p.refillSchedule?.length||0, used=p.usedRefills||0, pct=total?(used/total)*100:0;
-  const undoDisabled = !state.undoStack.length;
-
-  return `
-  <div>
-    <div class="back-bar">
-      <button class="btn-ghost" onclick="goList()">${IBack}</button>
-      <span>客人資料</span>
-      <button class="hbtn" style="background:var(--wbg);color:#F57F17;border:1px solid #FFD54F;font-size:12px;padding:6px 10px;border-radius:8px" onclick="doUndo()" ${undoDisabled?'disabled style="opacity:.3"':''}>
-        ${IUndo} 復原
-      </button>
-      <button class="btn" style="background:var(--pp);color:var(--pri);font-size:12px;padding:5px 10px" onclick="goEditForm('${p.id}')">${IEdit} 編輯</button>
-      <button class="btn btn-dng" style="font-size:12px;padding:5px 10px" onclick="confirmDelete('${p.id}')">${ITrash} 刪除</button>
-    </div>
-
-    <div class="profile-center">
-      <div class="profile-avatar">${esc((p.name||"?")[0])}</div>
-      <div class="flex items-center justify-content:center gap-8" style="justify-content:center">
-        <h2 style="font-size:20px;font-weight:800;margin:0">${esc(p.name)}</h2>
-        ${contactBadgeHTML(p.contactMethod)}
-      </div>
-      ${p.phone?`<p style="margin:3px 0;color:var(--ts);font-size:13px">📱 ${esc(p.phone)}</p>`:''}
-      ${p.notes?`<p style="margin:3px 0;color:var(--ts);font-size:12px;font-style:italic;line-height:1.5">💬 ${esc(p.notes)}</p>`:''}
-    </div>
-
-    <div style="padding:0 16px 32px">
-      ${chronicRxs.length?`
-        <div class="section-title">💊 慢箋藥品</div>
-        ${chronicRxs.map(rx=>`
-          <div class="rx-block chronic">
-            <div class="flex justify-between items-center">
-              <div><div style="font-weight:700;font-size:14px">${esc(rx.name)}</div>${rx.dosage?`<div style="font-size:12px;color:var(--ts);margin-top:1px">${esc(rx.dosage)}</div>`:''}</div>
-              <span class="badge badge-chronic">慢箋</span>
+const RX_KEY='pharmacy-v2',ORD_KEY='drug-orders-v1';
+function loadRx(){try{return JSON.parse(localStorage.getItem(RX_KEY))||[];}catch{return[];}}
+function saveRx(a){localStorage.setItem(RX_KEY,JSON.stringify(a));}
+function loadOrd(){try{return JSON.parse(localStorage.getItem(ORD_KEY))||[];}catch{return[];}}
+function saveOrd(a){localStorage.setItem(ORD_KEY,JSON.stringify(a));}
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function now(){const d=new Date();return d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function fmt(d){if(!d)return'';const t=new Date(d);return`${t.getFullYear()}/${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')}`;}
+function fmtS(d){if(!d)return'';const t=new Date(d);return`${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')}`;}
+function daysTo(s){if(!s)return Infinity;const t=new Date();t.setHours(0,0,0,0);return Math.round((new Date(s+'T00:00:00')-t)/864e5);}
+function nextRef(p){if(!p.refillSchedule?.length)return null;const u=p.usedRefills||0;return u>=p.refillSchedule.length?null:p.refillSchedule[u];}
+function hasChronic(p){return(p.prescriptions||[]).some(rx=>rx.isChronic);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+const svg=(d,s=20)=>`<svg width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="${d}"/></svg>`;
+const IBack=svg("M15 18l-6-6 6-6"),IPlus=svg("M12 5v14M5 12h14"),ISearch=svg("M21 21l-4.35-4.35M11 3a8 8 0 100 16 8 8 0 000-16z"),ITrash=svg("M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6",16),IEdit=svg("M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z",16),IChk=`<svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>`;
+const SUPPLIERS=["業務","大中盤","小中盤","其他"],STATUS_ORDER=["未叫貨","已叫貨","已到貨"];
+const SC={"未叫貨":{bg:"#FFEBEB",tx:"#FF3B30",dot:"#FF3B30"},"已叫貨":{bg:"#E8F0FE",tx:"#0055D4",dot:"#007AFF"},"已到貨":{bg:"#E8F8EC",tx:"#1B7A2E",dot:"#34C759"}};
+const aC=['#FF3B30','#FF9500','#FFCC00','#34C759','#007AFF','#AF52DE','#FF2D55','#5AC8FA'];
+function aColor(n){let h=0;for(let i=0;i<(n||'').length;i++)h=n.charCodeAt(i)+((h<<5)-h);return aC[Math.abs(h)%aC.length];}
+let S={module:'home',patients:loadRx(),view:'list',sel:null,form:null,search:'',showImp:false,impTxt:'',impMsg:'',isReview:false,delTarget:null,undoStack:[],orders:loadOrd(),oView:'list',oEdit:null,oSearch:'',oFilterSup:'全部',oFilterStat:'全部',oShowFilter:false,oImportMode:false,oExpanded:{}};
+function persistRx(a){S.undoStack.push(JSON.stringify(S.patients));if(S.undoStack.length>20)S.undoStack.shift();S.patients=a;saveRx(a);render();}
+function persistOrd(a){S.orders=a;saveOrd(a);render();}
+function rBadge(p){if(!hasChronic(p))return'';const n=nextRef(p);if(!n)return`<span class="refill-pill" style="color:var(--lb);background:var(--sepL)">已領完</span>`;const d=daysTo(n.startDate);if(d<0)return`<span class="refill-pill" style="color:var(--red);background:var(--redBg)">可領藥中</span>`;if(d<=3)return`<span class="refill-pill" style="color:var(--orange);background:var(--orangeBg)">${d===0?'今天可領':d+'天後可領'}</span>`;return`<span class="refill-pill" style="color:var(--green);background:var(--greenBg)">${d}天後可領</span>`;}
+function cBadge(m){if(!m)return'';if(m==='line')return`<span class="badge" style="background:#06C755;color:#fff">LINE</span>`;if(m==='phone')return`<span class="badge" style="background:var(--blueBg);color:var(--blue)">電話</span>`;if(m==='both')return`<span class="badge" style="background:#06C755;color:#fff">LINE</span> <span class="badge" style="background:var(--blueBg);color:var(--blue)">電話</span>`;return'';}
+function tl(p){if(!p.refillSchedule?.length)return'';const used=p.usedRefills||0;const nw=new Date();nw.setHours(0,0,0,0);let h='<div style="margin-top:10px">';p.refillSchedule.forEach((s,i)=>{const done=i<used,cur=i===used,st=new Date(s.startDate),en=s.endDate?new Date(s.endDate):null,inW=cur&&st<=nw&&(!en||nw<=en),past=cur&&en&&nw>en;const dc=done?'var(--green)':inW?'var(--red)':past?'var(--red)':cur?'var(--orange)':'var(--sepL)',db=done?'var(--green)':'#fff',ds=done?18:14,rb=inW?'var(--redBg)':past?'var(--redBg)':'transparent';h+=`<div style="display:flex;align-items:stretch;gap:10px"><div style="display:flex;flex-direction:column;align-items:center;width:20px">${i>0?`<div style="width:2px;height:6px;background:${i<=used?'var(--green)':'var(--sepL)'}"></div>`:''}<div class="tl-dot" style="width:${ds}px;height:${ds}px;background:${db};border:2.5px solid ${dc}">${done?IChk:''}</div>${i<p.refillSchedule.length-1?`<div class="tl-line" style="background:${i<used?'var(--green)':'var(--sepL)'}"></div>`:''}</div><div style="flex:1;padding:6px 10px;margin-bottom:4px;border-radius:8px;background:${rb};opacity:${done?.5:1}"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-size:14px;font-weight:${done?400:600};text-decoration:${done?'line-through':'none'}">第${s.refillNumber}次</span><span style="font-size:13px;color:var(--sec)">${esc(fmt(s.startDate))}${s.endDate?' — '+fmt(s.endDate):''}</span>${done?`<span style="font-size:11px;color:var(--green)">✓ 已領</span>`:''}${inW?`<span style="font-size:11px;font-weight:600;color:var(--red)">← 現在可領</span>`:''}${past?`<span style="font-size:11px;font-weight:600;color:var(--red)">逾期</span>`:''}</div></div></div>`;});return h+'</div>';}
+function renderHome(){const rc=S.patients.length,urg=S.patients.filter(p=>hasChronic(p)).map(p=>{const n=nextRef(p);return n?{d:daysTo(n.startDate)}:null;}).filter(Boolean).filter(r=>r.d<=7).length,oc=S.orders.length,op=S.orders.filter(i=>i.status==='未叫貨').length,oo=S.orders.filter(i=>i.status==='已叫貨').length;return`<div><div class="home-top"><h1>藥局管理</h1></div><div class="home-cards"><div class="hcard" onclick="goModule('rx')"><div class="hcard-icon rx">📋</div><div class="hcard-body"><div class="hcard-title">慢箋管理</div><div class="hcard-desc">客人資料・處方・領藥追蹤</div>${urg?`<span class="hcard-stat" style="background:var(--orangeBg);color:var(--orange)">⚠ ${urg} 位近期需領藥</span>`:rc?`<span class="hcard-stat" style="background:var(--greenBg);color:var(--green)">${rc} 位客人</span>`:`<span class="hcard-stat" style="background:var(--sepL);color:var(--lb)">尚無資料</span>`}</div><div class="hcard-arrow">›</div></div><div class="hcard" onclick="goModule('order')"><div class="hcard-icon ord">📦</div><div class="hcard-body"><div class="hcard-title">叫貨管理</div><div class="hcard-desc">供應商・數量搭贈・進度追蹤</div>${op?`<span class="hcard-stat" style="background:var(--redBg);color:var(--red)">${op} 筆未叫貨</span>`:oo?`<span class="hcard-stat" style="background:var(--blueBg);color:var(--blue)">${oo} 筆已叫貨</span>`:oc?`<span class="hcard-stat" style="background:var(--greenBg);color:var(--green)">全部到貨</span>`:`<span class="hcard-stat" style="background:var(--sepL);color:var(--lb)">尚無資料</span>`}</div><div class="hcard-arrow">›</div></div></div></div>`;}
+function goModule(m){S.module=m;if(m==='rx'){S.view='list';S.sel=null;}if(m==='order'){S.oView='list';S.oEdit=null;}render();}
+function goHome(){S.module='home';render();}
+function renderRxList(){const f=S.patients.filter(p=>p.name.toLowerCase().includes(S.search.toLowerCase())||(p.prescriptions||[]).some(rx=>(rx.name||'').toLowerCase().includes(S.search.toLowerCase())));const urg=S.patients.filter(p=>hasChronic(p)).map(p=>{const n=nextRef(p);return n?{p,d:daysTo(n.startDate),n}:null;}).filter(Boolean).filter(r=>r.d<=7).sort((a,b)=>a.d-b.d);return`<div><div class="nav"><button class="nav-back" onclick="goHome()">${IBack} 首頁</button><div class="nav-title">慢箋管理</div><button class="nav-btn" onclick="S.showImp=!S.showImp;render()">匯入</button><button class="nav-btn" onclick="rxNew()">新增</button></div><div class="search-box">${ISearch}<input id="search-inp" type="text" inputmode="search" placeholder="搜尋姓名或藥品" value="${esc(S.search)}" autocomplete="off" autocorrect="off">${S.search?`<button class="search-clear" onclick="S.search='';render()">✕</button>`:''}</div>${S.showImp?`<div class="imp-panel"><div style="font-size:15px;font-weight:600;margin-bottom:8px">貼上 JSON 匯入</div><textarea id="imp-txt" class="inp" rows="4" style="font-family:monospace;font-size:13px;resize:vertical" placeholder="貼上 Claude 給的 JSON…">${esc(S.impTxt)}</textarea>${S.impMsg?`<div style="margin-top:6px;font-size:13px;color:var(--red)">${esc(S.impMsg)}</div>`:''}<div style="display:flex;gap:8px;margin-top:10px"><button class="btn-blue" style="flex:1" onclick="rxImp()">匯入</button><button class="btn-gray" onclick="S.showImp=false;S.impTxt='';S.impMsg='';render()">取消</button></div></div>`:''}${!S.search&&urg.length?`<div class="section"><div class="section-label">⚠ 近期需領藥</div><div class="s-card">${urg.slice(0,5).map(r=>`<div class="s-row" style="cursor:pointer" onclick="rxDet('${r.p.id}')"><span style="font-size:15px;font-weight:500;flex:1">${esc(r.p.name)}<br><span style="font-size:12px;color:var(--lb)">${esc(fmtS(r.n.startDate))}~${esc(fmtS(r.n.endDate))}</span></span>${rBadge(r.p)}</div>`).join('')}</div></div>`:''}<div class="section"><div class="section-label">${f.length} 位客人</div>${f.length?`<div class="s-card">${f.map(p=>`<div class="p-item" onclick="rxDet('${p.id}')"><div class="p-avatar" style="background:${aColor(p.name)}">${esc((p.name||'?')[0])}</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px">${esc(p.name)} ${cBadge(p.contactMethod)}</div><div style="font-size:13px;color:var(--lb);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((p.prescriptions||[]).map(rx=>rx.name).filter(Boolean).join('、'))||'尚無處方'}</div>${hasChronic(p)?`<div style="margin-top:3px">${rBadge(p)}</div>`:''}</div><span style="color:var(--sep);font-size:18px">›</span></div>`).join('')}</div>`:`<div style="text-align:center;padding:40px;color:var(--lb)"><div style="font-size:40px;margin-bottom:8px">${S.search?'🔍':'👋'}</div>${S.search?'找不到符合的客人':'尚無客人資料'}</div>`}</div></div>`;}
+function renderRxDet(){const p=S.patients.find(x=>x.id===S.sel);if(!p){S.view='list';return renderRxList();}const cRx=(p.prescriptions||[]).filter(rx=>rx.isChronic),gRx=(p.prescriptions||[]).filter(rx=>!rx.isChronic),total=p.refillSchedule?.length||0,used=p.usedRefills||0,pct=total?(used/total)*100:0;return`<div><div class="nav"><button class="nav-back" onclick="S.view='list';S.sel=null;render()">${IBack} 返回</button><div class="nav-title"></div><button class="nav-btn" onclick="rxEditF('${p.id}')">編輯</button></div><div style="text-align:center;padding:16px 20px"><div class="p-avatar" style="width:72px;height:72px;font-size:28px;border-radius:50%;margin:0 auto 10px;background:${aColor(p.name)}">${esc((p.name||'?')[0])}</div><div style="font-size:22px;font-weight:700">${esc(p.name)} ${cBadge(p.contactMethod)}</div>${p.phone?`<div style="color:var(--lb);font-size:14px;margin-top:4px">${esc(p.phone)}</div>`:''}${p.notes?`<div style="color:var(--sec);font-size:13px;margin-top:4px;line-height:1.5">${esc(p.notes)}</div>`:''}</div><div class="section">${cRx.length?`<div class="section-label">慢箋藥品</div><div class="s-card">${cRx.map(rx=>`<div class="rx-block"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:15px">${esc(rx.name)}</div>${rx.dosage?`<div style="font-size:13px;color:var(--lb);margin-top:2px">${esc(rx.dosage)}</div>`:''}</div><span class="badge" style="background:var(--orangeBg);color:var(--orange)">慢箋</span></div>${rx.note?`<div style="font-size:12px;color:var(--lb);margin-top:4px">${esc(rx.note)}</div>`:''}</div>`).join('')}</div>${total>0?`<div class="prog-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:14px;font-weight:600">領藥進度</span>${rBadge(p)}</div><div style="font-size:13px;color:var(--lb);margin-bottom:4px">已領 ${used}/${total} 次</div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>${tl(p)}${used<total?`<button onclick="rxMark('${p.id}')" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;width:100%;padding:11px;background:var(--green);color:#fff;border-radius:10px;font-size:15px;font-weight:600;border:none">✓ 標記已領藥（第${used+1}次）</button>`:''}</div>`:''}`:''}${gRx.length?`<div class="section-label">一般處方藥</div><div class="s-card">${gRx.map(rx=>`<div class="rx-block"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:15px">${esc(rx.name)}</div>${rx.dosage?`<div style="font-size:13px;color:var(--lb);margin-top:2px">${esc(rx.dosage)}</div>`:''}</div><span class="badge" style="background:var(--blueBg);color:var(--blue)">一般</span></div>${rx.note?`<div style="font-size:12px;color:var(--lb);margin-top:4px">${esc(rx.note)}</div>`:''}</div>`).join('')}</div>`:''}${!(p.prescriptions||[]).length?`<div style="text-align:center;padding:20px;color:var(--lb)">尚無處方</div>`:''}<div style="padding:16px 0"><button class="del-btn" onclick="rxConfDel('${p.id}')">刪除此客人</button></div></div></div>`;}
+function renderRxForm(){const f=S.form,isE=S.patients.some(p=>p.id===f.id),title=S.isReview?'確認匯入':isE?'編輯客人':'新增客人',fHC=(f.prescriptions||[]).some(rx=>rx.isChronic);const cO=[{v:'line',l:'LINE'},{v:'phone',l:'電話'},{v:'both',l:'LINE+電話'},{v:'',l:'未設定'}];return`<div><div class="nav"><button class="nav-back" onclick="S.view=S.sel?'detail':'list';S.isReview=false;render()">${IBack} 返回</button><div class="nav-title">${esc(title)}</div></div>${S.isReview?`<div style="margin:0 16px 12px;padding:12px;background:var(--orangeBg);border-radius:10px;font-size:13px;color:var(--orange);font-weight:500">👀 請檢查後儲存</div>`:''}<div style="padding:0 16px 40px"><div class="form-group"><label class="lbl">姓名</label><input class="inp" id="f-name" value="${esc(f.name)}"></div><div class="form-group"><label class="lbl">電話</label><input class="inp" id="f-phone" value="${esc(f.phone||'')}"></div><div class="form-group"><label class="lbl">聯絡方式</label><div class="contact-btns">${cO.map(o=>`<button class="contact-btn ${f.contactMethod===o.v?'on':''}" onclick="S.form.contactMethod='${o.v}';render()">${o.l}</button>`).join('')}</div></div><div class="form-group"><label class="lbl">備註</label><textarea class="inp" rows="2" style="resize:vertical" oninput="S.form.notes=this.value">${esc(f.notes||'')}</textarea></div><div class="form-group"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><label class="lbl" style="margin:0">處方藥</label><button class="btn-ghost" onclick="S.form.prescriptions.push({name:'',dosage:'',isChronic:false,note:''});render()">${IPlus} 新增</button></div>${(f.prescriptions||[]).map((rx,i)=>`<div class="rx-form-card"><button onclick="S.form.prescriptions.splice(${i},1);render()" style="position:absolute;top:8px;right:8px;background:none;color:var(--red);opacity:.5;padding:4px">${ITrash}</button><div class="row2" style="margin-bottom:8px"><div><label class="lbl">藥品名稱</label><input class="inp" value="${esc(rx.name||'')}" oninput="S.form.prescriptions[${i}].name=this.value"></div><div><label class="lbl">用法用量</label><input class="inp" value="${esc(rx.dosage||'')}" oninput="S.form.prescriptions[${i}].dosage=this.value"></div></div><label style="font-size:13px;color:var(--sec);display:flex;align-items:center;gap:6px;margin-bottom:8px"><input type="checkbox" ${rx.isChronic?'checked':''} onchange="S.form.prescriptions[${i}].isChronic=this.checked;render()"> 慢箋</label><div><label class="lbl">備註</label><input class="inp" value="${esc(rx.note||'')}" oninput="S.form.prescriptions[${i}].note=this.value"></div></div>`).join('')}</div>${fHC?`<div class="form-group"><div style="padding:14px;background:var(--greenBg);border-radius:12px"><div style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:8px">慢箋領藥區間</div>${(f.refillSchedule||[]).map((sc,si)=>`<div class="sched-row"><span style="font-size:13px;font-weight:500;color:var(--sec);min-width:40px">第${sc.refillNumber}次</span><input type="date" class="inp" style="flex:1;padding:8px;font-size:13px" value="${esc(sc.startDate||'')}" onchange="S.form.refillSchedule[${si}].startDate=this.value"><span style="color:var(--lb)">~</span><input type="date" class="inp" style="flex:1;padding:8px;font-size:13px" value="${esc(sc.endDate||'')}" onchange="S.form.refillSchedule[${si}].endDate=this.value"><button onclick="S.form.refillSchedule.splice(${si},1);S.form.refillSchedule=S.form.refillSchedule.map((x,i)=>({...x,refillNumber:i+1}));render()" style="background:none;color:var(--red);opacity:.5;padding:2px">${ITrash}</button></div>`).join('')}<button onclick="S.form.refillSchedule.push({refillNumber:S.form.refillSchedule.length+1,startDate:'',endDate:''});render()" class="btn-ghost" style="margin-top:4px;font-size:13px">${IPlus} 新增區間</button><div style="margin-top:8px"><label class="lbl">已領次數</label><input type="number" class="inp" style="width:80px" value="${f.usedRefills||0}" min="0" onchange="S.form.usedRefills=parseInt(this.value)||0"></div></div></div>`:''}<button class="save-btn" onclick="rxSave()">${S.isReview?'確認儲存':'儲存'}</button></div></div>`;}
+function rxNew(){S.form={id:uid(),name:'',phone:'',contactMethod:'',prescriptions:[],notes:'',refillSchedule:[],usedRefills:0};S.view='form';S.isReview=false;render();}
+function rxDet(id){S.view='detail';S.sel=id;render();}
+function rxEditF(id){S.form=JSON.parse(JSON.stringify(S.patients.find(x=>x.id===id)));S.view='form';S.isReview=false;render();}
+function rxMark(pid){persistRx(S.patients.map(p=>p.id!==pid?p:{...p,usedRefills:(p.usedRefills||0)+1}));S.sel=pid;showToast('✓ 已標記領藥');}
+function rxSave(){const ne=document.getElementById('f-name'),pe=document.getElementById('f-phone');if(ne)S.form.name=ne.value;if(pe)S.form.phone=pe.value;const ta=document.querySelector('textarea');if(ta)S.form.notes=ta.value;if(!S.form.name.trim()){showToast('請輸入姓名');return;}const ex=S.patients.some(p=>p.id===S.form.id);persistRx(ex?S.patients.map(p=>p.id===S.form.id?S.form:p):[...S.patients,S.form]);showToast('已儲存');S.sel=S.form.id;S.view='detail';S.isReview=false;render();}
+function rxImp(){const el=document.getElementById('imp-txt');let t=(el?el.value:S.impTxt).trim();S.impTxt=t;try{const m=t.match(/`(?:json)?\s*([\s\S]*?)`/);if(m)t=m[1].trim();const data=JSON.parse(t),entries=Array.isArray(data)?data:[data];if(!entries.length||!entries[0].name)throw 0;const e=entries[0];let sch=e.refillSchedule||[],ur=e.usedRefills||0;if(!sch.length){const fc=(e.prescriptions||[]).find(rx=>rx.isChronic&&rx.refillSchedule?.length);if(fc){sch=fc.refillSchedule;ur=fc.usedRefills||0;}}const fo={id:uid(),name:e.name,phone:e.phone||'',contactMethod:e.contactMethod||'',notes:e.notes||'',refillSchedule:sch.map(s=>({refillNumber:s.refillNumber,startDate:s.startDate||'',endDate:s.endDate||''})),usedRefills:ur,prescriptions:(e.prescriptions||[]).map(rx=>({name:rx.name||'',dosage:rx.dosage||'',isChronic:rx.isChronic||false,note:rx.note||''}))};const ex=S.patients.find(p=>p.name===e.name);if(ex){fo.id=ex.id;fo.contactMethod=ex.contactMethod||fo.contactMethod;}S.form=fo;S.view='form';S.isReview=true;S.showImp=false;S.impTxt='';S.impMsg='';render();}catch{S.impMsg='格式錯誤';render();}}
+function rxConfDel(id){S.delTarget=id;const p=S.patients.find(x=>x.id===id);document.body.insertAdjacentHTML('beforeend',`<div class="overlay" id="del-modal" onclick="rxCanDel()"><div class="modal" onclick="event.stopPropagation()"><h3 style="font-size:17px;font-weight:600;margin-bottom:8px">確定刪除？</h3><p style="font-size:14px;color:var(--sec);margin-bottom:18px">「${esc(p?.name||'')}」的資料將被刪除</p><div style="display:flex;gap:10px"><button class="btn-gray" style="flex:1" onclick="rxCanDel()">取消</button><button class="btn-blue" style="flex:1;background:var(--red)" onclick="rxExDel()">刪除</button></div></div></div>`);}
+function rxCanDel(){document.getElementById('del-modal')?.remove();S.delTarget=null;}
+function rxExDel(){if(!S.delTarget)return;persistRx(S.patients.filter(p=>p.id!==S.delTarget));S.delTarget=null;S.view='list';S.sel=null;document.getElementById('del-modal')?.remove();showToast('已刪除');}
+function ordCSV(){const h=["藥品名稱","健保碼","劑量","管制藥","供應商","叫貨量","搭贈","原庫存","總庫存","叫貨狀態","備註","建檔日期"],rows=S.orders.map(i=>{const cs=i.currentStock!=null?i.currentStock:'';return[i.name,i.nhCode||'',i.dosage||'',i.controlled?'是':'',i.supplier,i.qty,i.bonus||'',i.stock||'',cs,i.status,i.note||'',i.createdAt||''];}),csv="\uFEFF"+[h,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(",")).join("\n"),a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="藥品叫貨_"+now().replace(/[:\/ ]/g,'')+".csv";document.body.appendChild(a);a.click();document.body.removeChild(a);}
+function ordParse(text){try{const p=JSON.parse(text),a=Array.isArray(p)?p:[p];return a.map(x=>({id:uid(),name:x.name||x["藥品名稱"]||'',nhCode:x.nhCode||x["健保碼"]||'',dosage:x.dosage||x["劑量"]||'',controlled:x.controlled||x["管制藥"]||false,supplier:x.supplier||x["供應商"]||'其他',qty:String(x.qty||x["叫貨量"]||''),bonus:String(x.bonus||x["搭贈"]||''),stock:String(x.stock||x["庫存"]||x["原庫存"]||''),status:x.status||x["叫貨狀態"]||'未叫貨',note:x.note||x["備註"]||'',createdAt:now(),updatedAt:now()}));}catch{}return text.trim().split("\n").filter(l=>l.trim()).map(l=>{const c=l.split(/[,\t]/).map(s=>s.trim().replace(/^"|"$/g,''));return c[0]?{id:uid(),name:c[0],supplier:c[1]||'其他',qty:c[2]||'',bonus:c[3]||'',status:c[4]||'未叫貨',note:c[5]||'',createdAt:now(),updatedAt:now()}:null;}).filter(Boolean);}
+function ordGetHistory(name){return S.orders.filter(i=>i.name===name&&i.status==='已到貨').sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));}
+function ordLatestStock(name){const hist=ordGetHistory(name);return hist.length&&hist[0].currentStock!=null?hist[0].currentStock:null;}
+// Group orders by drug name
+function ordGrouped(list){const map={};list.forEach(i=>{const k=i.name;if(!map[k])map[k]=[];map[k].push(i);});return Object.entries(map).map(([name,items])=>{items.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));const latest=items[0];const isControlled=items.some(i=>i.controlled);return{name,isControlled,latest,items};});}
+function renderOrdList(){
+  const f=S.orders.filter(i=>{if(S.oSearch&&!i.name.toLowerCase().includes(S.oSearch.toLowerCase())&&!(i.note||'').toLowerCase().includes(S.oSearch.toLowerCase()))return false;if(S.oFilterSup!=='全部'&&i.supplier!==S.oFilterSup)return false;if(S.oFilterStat!=='全部'&&i.status!==S.oFilterStat)return false;return true;});
+  const st={t:S.orders.length,p:S.orders.filter(i=>i.status==='未叫貨').length,o:S.orders.filter(i=>i.status==='已叫貨').length,a:S.orders.filter(i=>i.status==='已到貨').length};
+  const groups=ordGrouped(f);
+  let h=`<div><div class="nav"><button class="nav-back" onclick="goHome()">${IBack} 首頁</button><div class="nav-title">叫貨管理</div><button class="nav-btn" onclick="ordNewF()">新增</button><button class="nav-btn" onclick="S.oImportMode=!S.oImportMode;render()">匯入</button><button class="nav-btn" onclick="ordCSV()">匯出</button></div>
+  <div class="o-stat-bar"><div class="o-stat-item"><div class="num">${st.t}</div><div class="lbl">全部</div></div><div class="o-stat-item"><div class="num" style="color:var(--red)">${st.p}</div><div class="lbl">未叫貨</div></div><div class="o-stat-item"><div class="num" style="color:var(--blue)">${st.o}</div><div class="lbl">已叫貨</div></div><div class="o-stat-item"><div class="num" style="color:var(--green)">${st.a}</div><div class="lbl">已到貨</div></div></div>
+  <div class="search-box">${ISearch}<input id="o-search" value="${esc(S.oSearch)}" placeholder="搜尋藥品名稱" autocomplete="off">${S.oSearch?`<button class="search-clear" onclick="S.oSearch='';render()">✕</button>`:''}</div>`;
+  if(S.oImportMode)h+=`<div class="o-import"><div style="font-size:15px;font-weight:600;margin-bottom:8px">貼上資料匯入</div><textarea id="o-imp-txt" class="inp" rows="4" style="font-size:13px;resize:vertical" placeholder="JSON 或 CSV"></textarea><div style="display:flex;gap:8px;margin-top:8px"><button class="btn-blue" style="flex:1" onclick="ordDoImp()">匯入</button><button class="btn-gray" onclick="S.oImportMode=false;render()">取消</button></div></div>`;
+  h+=`<div class="section">`;
+  if(!groups.length)h+=`<div style="text-align:center;padding:40px;color:var(--lb)"><div style="font-size:40px;margin-bottom:8px">📦</div>${S.orders.length?'無符合結果':'尚無藥品'}</div>`;
+  else{
+    groups.forEach(g=>{
+      const expanded=S.oExpanded[g.name];
+      const latest=g.latest;
+      const histCount=g.items.length;
+      const sc=SC[latest.status];
+      const nameColor=g.isControlled?'var(--red)':'var(--tx)';
+      const infoLine=(item)=>{const os=item._origStock!=null?item._origStock:(parseInt(item.stock)||0);const osColor=os<=5?'var(--red)':os<=10?'var(--orange)':'var(--tx)';const gc=item._groupCurrentStock;const ic=item.currentStock;return`<div style="font-size:20px;color:var(--lb);line-height:2">叫貨量：<strong style="color:var(--tx)">${esc(item.qty)||'—'}</strong>${item.bonus?' · 搭贈：<strong style="color:var(--tx)">'+esc(item.bonus)+'</strong>':''} · 原庫存：<strong style="color:${osColor}">${os}</strong>${ic!=null?'<br>📋 <strong style="color:var(--blue)">單筆結餘：'+os+' + '+(parseInt(item.qty)||0)+(parseInt(item.bonus)||0?'+'+(parseInt(item.bonus)||0):'')+' = '+ic+'</strong>':''}${item._hasArrived?`<br>📦 <strong style="color:var(--green)">總庫存：${gc}</strong>`:''}</div>`;};
+      const supBadge=(sup)=>`<span class="o-badge" style="background:#F5E6D3;color:#8B5E3C">${esc(sup)}</span>`;
+      const ctrlBadge=()=>g.isControlled?'<span class="o-badge" style="background:var(--redBg);color:var(--red)">⚠️ 管制藥</span>':'';
+      h+=`<div class="s-card" style="margin-bottom:10px;border-radius:12px;overflow:hidden">`;
+      // Main card (latest = #1)
+      h+=`<div class="o-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:700">1</span>
+              <span style="font-size:16px;font-weight:700;color:${nameColor}">${esc(g.name)}</span>
+              ${ctrlBadge()}
             </div>
-            ${rx.note?`<div style="font-size:11px;color:var(--ts);margin-top:4px;font-style:italic">📝 ${esc(rx.note)}</div>`:''}
-          </div>`).join('')}
-        ${total>0?`
-          <div class="prog-box">
-            <div class="flex justify-between items-center mb-8">
-              <span style="font-size:13px;font-weight:700">📅 領藥進度</span>
-              ${refillBadgeHTML(p)}
+            ${latest.nhCode||latest.dosage?`<div style="font-size:13px;color:var(--sec);margin-bottom:4px">${latest.nhCode?'健保碼：'+esc(latest.nhCode):''}${latest.nhCode&&latest.dosage?' · ':''}${latest.dosage?'劑量：'+esc(latest.dosage):''}</div>`:''}
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+              ${supBadge(latest.supplier)}
+              ${latest.bonus?`<span class="o-badge" style="background:var(--orangeBg);color:var(--orange)">搭贈 ${esc(latest.bonus)}</span>`:''}
             </div>
-            <div style="font-size:12px;color:var(--ts);margin-bottom:4px">已領 ${used}/${total} 次</div>
-            <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
-            ${timelineHTML(p)}
-            ${used<total?`<button onclick="markRefill('${p.id}')" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;width:100%;padding:10px;background:var(--pri);color:#fff;border-radius:8px;font-size:14px;font-weight:700;border:none;cursor:pointer">✓ 標記已領藥（第 ${used+1} 次）</button>`:''}
-          </div>`:''}
-      `:''}
-
-      ${generalRxs.length?`
-        <div class="section-title">💊 一般處方藥</div>
-        ${generalRxs.map(rx=>`
-          <div class="rx-block general">
-            <div class="flex justify-between items-center">
-              <div><div style="font-weight:700;font-size:14px">${esc(rx.name)}</div>${rx.dosage?`<div style="font-size:12px;color:var(--ts);margin-top:1px">${esc(rx.dosage)}</div>`:''}</div>
-              <span class="badge badge-general">一般</span>
-            </div>
-            ${rx.note?`<div style="font-size:11px;color:var(--ts);margin-top:4px;font-style:italic">📝 ${esc(rx.note)}</div>`:''}
-          </div>`).join('')}
-      `:''}
-
-      ${!(p.prescriptions||[]).length?`<p style="color:var(--ts);font-size:13px;text-align:center;padding:16px">尚無處方藥紀錄</p>`:''}
-    </div>
-  </div>`;
-}
-
-function renderForm() {
-  const f = state.form;
-  const isEdit = state.patients.some(p=>p.id===f.id);
-  const title = state.isReview?'⚠️ 確認匯入資料':isEdit?'編輯客人':'新增客人';
-  const formHasChronic = (f.prescriptions||[]).some(rx=>rx.isChronic);
-
-  const contactOpts = [
-    {val:'line',label:'LINE',bg:'#06C755'},
-    {val:'phone',label:'📞 電話',bg:'#4A90D9'},
-    {val:'both',label:'LINE+電話',bg:'#1B6B4A'},
-    {val:'',label:'未設定',bg:'#ccc'},
-  ];
-
-  return `
-  <div>
-    <div class="back-bar">
-      <button class="btn-ghost" onclick="goBack()">${IBack}</button>
-      <span>${esc(title)}</span>
-    </div>
-
-    ${state.isReview?`
-      <div style="margin:6px 16px 0;padding:14px;background:#FFF8E1;border:2px solid #FFB300;border-radius:14px;display:flex;align-items:center;gap:10px">
-        <div style="font-size:24px">👀</div>
-        <div style="font-size:13px;line-height:1.5;color:#7A6200">請檢查是否正確，可直接修改，確認後按儲存。</div>
-      </div>`:''}
-
-    <div style="padding:6px 16px 32px">
-      <div class="mb-14">
-        <label class="lbl">姓名 *</label>
-        <input class="inp" id="f-name" value="${esc(f.name)}" oninput="updateForm('name',this.value)">
-      </div>
-      <div class="mb-14">
-        <label class="lbl">電話</label>
-        <input class="inp" id="f-phone" value="${esc(f.phone||'')}" oninput="updateForm('phone',this.value)">
-      </div>
-      <div class="mb-14">
-        <label class="lbl">聯絡方式</label>
-        <div class="contact-btns">
-          ${contactOpts.map(o=>`
-            <button class="contact-btn ${f.contactMethod===o.val?'active':''}"
-              style="${f.contactMethod===o.val?`background:${o.bg}`:'background:#F0F0EC'}"
-              onclick="updateForm('contactMethod','${o.val}')">${esc(o.label)}</button>`).join('')}
-        </div>
-      </div>
-      <div class="mb-18">
-        <label class="lbl">備註</label>
-        <textarea class="inp" rows="2" style="resize:vertical" oninput="updateForm('notes',this.value)">${esc(f.notes||'')}</textarea>
-      </div>
-
-      <div class="mb-18">
-        <div class="flex justify-between items-center mb-8">
-          <label class="lbl" style="margin:0">💊 處方藥</label>
-          <button class="btn" style="background:var(--pp);color:var(--pri);font-size:12px;padding:5px 12px" onclick="addRx()">${IPlus} 新增藥品</button>
-        </div>
-        <div id="rx-list">
-          ${(f.prescriptions||[]).map((rx,i)=>rxFormHTML(rx,i)).join('')}
-        </div>
-      </div>
-
-      ${formHasChronic?`
-        <div class="mb-18">
-          <div style="padding:12px;background:var(--pp);border-radius:10px;border:1px dashed var(--pl)">
-            <div style="font-size:13px;font-weight:700;color:var(--pri);margin-bottom:8px">📅 慢箋領藥區間</div>
-            <div id="sched-list">
-              ${(f.refillSchedule||[]).map((s,si)=>schedRowHTML(s,si)).join('')}
-            </div>
-            <button onclick="addSched()" style="display:flex;align-items:center;gap:5px;padding:5px 10px;background:white;color:var(--pri);border:1px dashed var(--pl);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-top:4px">${IPlus} 新增區間</button>
-            <div style="margin-top:8px">
-              <label class="lbl">已領次數</label>
-              <input type="number" class="inp" style="width:80px" value="${f.usedRefills||0}" min="0" onchange="updateForm('usedRefills',parseInt(this.value)||0)">
-            </div>
+            ${infoLine(latest)}
+            ${latest.note?`<div style="font-size:13px;color:var(--lb);margin-top:3px">${esc(latest.note)}</div>`:''}
+            <div style="font-size:12px;color:var(--lb);margin-top:6px;font-weight:400">${latest.createdAt||''}</div>
           </div>
-        </div>`:''}
-
-      <button class="save-btn" onclick="doSave()">${state.isReview?'✅ 確認無誤，儲存':'💾 儲存'}</button>
-    </div>
-  </div>`;
-}
-
-function rxFormHTML(rx, i) {
-  return `
-  <div class="rx-card ${state.isReview?'review':''}" id="rx-${i}">
-    <button onclick="removeRx(${i})" style="position:absolute;top:8px;right:8px;background:none;color:var(--dng);opacity:.5;cursor:pointer;border:none;padding:4px">${ITrash}</button>
-    <div class="grid2">
-      <div><label class="lbl">藥品名稱 *</label><input class="inp" value="${esc(rx.name||'')}" oninput="updateRx(${i},'name',this.value)"></div>
-      <div><label class="lbl">用法用量</label><input class="inp" value="${esc(rx.dosage||'')}" oninput="updateRx(${i},'dosage',this.value)"></div>
-    </div>
-    <label style="font-size:13px;color:var(--ts);display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:8px">
-      <input type="checkbox" ${rx.isChronic?'checked':''} onchange="updateRx(${i},'isChronic',this.checked)"> 慢箋藥品
-    </label>
-    <div><label class="lbl">備註</label><input class="inp" value="${esc(rx.note||'')}" placeholder="健保碼、注意事項" oninput="updateRx(${i},'note',this.value)"></div>
-  </div>`;
-}
-
-function schedRowHTML(s, si) {
-  return `
-  <div class="sched-row">
-    <span style="font-size:12px;font-weight:600;color:var(--ts);min-width:40px">第${s.refillNumber}次</span>
-    <input type="date" class="inp" style="flex:1;padding:6px 8px;font-size:13px" value="${esc(s.startDate||'')}" onchange="updateSched(${si},'startDate',this.value)">
-    <span style="font-size:12px;color:var(--ts)">~</span>
-    <input type="date" class="inp" style="flex:1;padding:6px 8px;font-size:13px" value="${esc(s.endDate||'')}" onchange="updateSched(${si},'endDate',this.value)">
-    <button onclick="removeSched(${si})" style="background:none;color:var(--dng);opacity:.5;cursor:pointer;border:none;padding:2px">${ITrash}</button>
-  </div>`;
-}
-
-// ══════════════════════════════════════════
-// DELETE MODAL
-// ══════════════════════════════════════════
-function confirmDelete(id) {
-  state.delTarget = id;
-  const p = state.patients.find(x=>x.id===id);
-  document.body.insertAdjacentHTML('beforeend', `
-    <div class="overlay" id="del-modal" onclick="cancelDelete()">
-      <div class="modal" onclick="event.stopPropagation()">
-        <h3 style="font-size:16px;margin-bottom:8px">⚠️ 確定刪除？</h3>
-        <p style="font-size:14px;color:var(--ts);margin-bottom:18px;line-height:1.5">將刪除「${esc(p?.name||'')}」的所有資料，<br>可按「復原」回復。</p>
-        <div class="flex gap-10">
-          <button class="btn btn-sec" style="flex:1;justify-content:center" onclick="cancelDelete()">取消</button>
-          <button class="btn" style="flex:1;justify-content:center;background:var(--dng);color:#fff" onclick="execDelete()">刪除</button>
+          <button class="o-status-btn" style="background:${sc.bg};color:${sc.tx}" onclick="ordCyc('${latest.id}')"><span class="o-dot" style="background:${sc.dot}"></span>${latest.status}</button>
         </div>
-      </div>
-    </div>`);
-}
-function cancelDelete() { document.getElementById('del-modal')?.remove(); state.delTarget=null; }
-function execDelete() {
-  if (!state.delTarget) return;
-  persist(state.patients.filter(p=>p.id!==state.delTarget));
-  state.delTarget=null; state.view='list'; state.sel=null;
-  document.getElementById('del-modal')?.remove();
-  showToast("🗑️ 已刪除");
-}
-
-// ══════════════════════════════════════════
-// ACTIONS
-// ══════════════════════════════════════════
-function goList()   { state.view='list'; state.sel=null; render(); }
-function goDetail(id) { state.view='detail'; state.sel=id; render(); }
-function goNewForm() {
-  state.form={id:uid(),name:'',phone:'',contactMethod:'',prescriptions:[],notes:'',refillSchedule:[],usedRefills:0};
-  state.view='form'; state.isReview=false; render();
-}
-function goEditForm(id) {
-  const p = state.patients.find(x=>x.id===id);
-  state.form = JSON.parse(JSON.stringify(p));
-  state.view='form'; state.isReview=false; render();
-}
-function goBack() {
-  state.view = state.sel?'detail':'list';
-  state.isReview=false; render();
-}
-
-function onSearch(v) { state.search=v; render(); }
-function clearSearch() { state.search=''; render(); }
-function toggleImp() { state.showImp=!state.showImp; render(); }
-function closeImp() { state.showImp=false; state.impTxt=''; state.impMsg=''; render(); }
-
-function updateForm(k,v) {
-  state.form[k]=v;
-  // Re-render only form to avoid losing focus on non-rerendering fields
-  if (k==='contactMethod'||k==='isChronic') render();
-  // For isChronic change, need full re-render to show/hide schedule editor
-}
-function updateRx(i,k,v) {
-  state.form.prescriptions[i][k]=v;
-  if (k==='isChronic') render();
-}
-function addRx() {
-  state.form.prescriptions.push({name:'',dosage:'',isChronic:false,note:''});
-  render();
-}
-function removeRx(i) {
-  state.form.prescriptions.splice(i,1);
-  render();
-}
-function updateSched(si,k,v) { state.form.refillSchedule[si][k]=v; }
-function addSched() {
-  const s = state.form.refillSchedule;
-  s.push({refillNumber:s.length+1,startDate:'',endDate:''});
-  render();
-}
-function removeSched(si) {
-  state.form.refillSchedule.splice(si,1);
-  state.form.refillSchedule = state.form.refillSchedule.map((x,i)=>({...x,refillNumber:i+1}));
-  render();
-}
-
-function markRefill(pid) {
-  const u = state.patients.map(p=>p.id!==pid?p:{...p,usedRefills:(p.usedRefills||0)+1});
-  persist(u);
-  state.sel=pid;
-  showToast("✅ 已標記領藥");
-}
-
-function doSave() {
-  // Collect current form values from DOM before saving
-  const nameEl = document.getElementById('f-name');
-  const phoneEl = document.getElementById('f-phone');
-  if (nameEl) state.form.name = nameEl.value;
-  if (phoneEl) state.form.phone = phoneEl.value;
-  // notes
-  const notesEl = document.querySelector('textarea');
-  if (notesEl) state.form.notes = notesEl.value;
-
-  if (!state.form.name.trim()) { showToast('請輸入姓名'); return; }
-  const exists = state.patients.some(p=>p.id===state.form.id);
-  const u = exists
-    ? state.patients.map(p=>p.id===state.form.id?state.form:p)
-    : [...state.patients, state.form];
-  persist(u);
-  showToast('✅ 已儲存');
-  state.sel=state.form.id; state.view='detail'; state.isReview=false;
-  render();
-}
-
-function handleImport() {
-  const el = document.getElementById('imp-txt');
-  let t = (el?el.value:state.impTxt).trim();
-  state.impTxt = t;
-  try {
-    const m = t.match(/`(?:json)?\s*([\s\S]*?)`/); if(m) t=m[1].trim();
-    const data = JSON.parse(t); const entries = Array.isArray(data)?data:[data];
-    if (!entries.length||!entries[0].name) throw new Error('no');
-    const entry = entries[0];
-    let schedule = entry.refillSchedule||[]; let usedRefills=entry.usedRefills||0;
-    if (!schedule.length) {
-      const fc=(entry.prescriptions||[]).find(rx=>rx.isChronic&&rx.refillSchedule?.length);
-      if(fc){schedule=fc.refillSchedule;usedRefills=fc.usedRefills||0;}
-    }
-    const fo={
-      id:uid(), name:entry.name, phone:entry.phone||'', contactMethod:entry.contactMethod||'', notes:entry.notes||'',
-      refillSchedule:schedule.map(s=>({refillNumber:s.refillNumber,startDate:s.startDate||'',endDate:s.endDate||''})),
-      usedRefills,
-      prescriptions:(entry.prescriptions||[]).map(rx=>({name:rx.name||'',dosage:rx.dosage||'',isChronic:rx.isChronic||false,note:rx.note||''}))
-    };
-    const existing = state.patients.find(p=>p.name===entry.name);
-    if(existing){fo.id=existing.id;fo.contactMethod=existing.contactMethod||fo.contactMethod;}
-    state.form=fo; state.view='form'; state.isReview=true;
-    state.showImp=false; state.impTxt=''; state.impMsg='';
-    render();
-  } catch(e) { state.impMsg='❌ 格式錯誤'; render(); }
-}
-
-// ══════════════════════════════════════════
-// RENDER
-// ══════════════════════════════════════════
-function render() {
-  const app = document.getElementById('app');
-  const wasFocused = document.activeElement?.id === 'search-inp';
-
-  let html = '';
-  if (state.view==='list')        html = renderList();
-  else if (state.view==='detail') html = renderDetail();
-  else if (state.view==='form')   html = renderForm();
-  app.innerHTML = html;
-
-  const si = document.getElementById('search-inp');
-  if (si) {
-    si.addEventListener('input', function() {
-      state.search = this.value;
-      updateListDOM();
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--sepL)">
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            ${latest.status==='已到貨'?`<button class="o-action" style="color:var(--orange);font-weight:600" onclick="ordReorder('${latest.id}')">🔄 再叫貨</button>`:''}
+            <button class="o-action" onclick="ordEd('${latest.id}')">編輯</button>
+            <button class="o-action red" onclick="ordConfirmDel('${latest.id}')">刪除</button>
+          </div>
+          ${histCount>1?`<button class="o-action" style="font-weight:600" onclick="S.oExpanded['${esc(g.name)}']=!S.oExpanded['${esc(g.name)}'];render()">${expanded?'收合 ▲':'紀錄 ('+histCount+') ▼'}</button>`:''}
+        </div>
+      </div>`;
+      // Expanded history (older records)
+      if(expanded&&histCount>1){
+        g.items.slice(1).forEach((item,idx)=>{
+          const hsc=SC[item.status];
+          const num=idx+2;
+          h+=`<div class="o-card" style="border-top:2px dashed var(--sepL);background:#FAFAFA">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div style="flex:1">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--lb);color:#fff;font-size:12px;font-weight:700">${num}</span>
+                  <span style="font-size:16px;font-weight:700;color:${nameColor}">${esc(item.name)}</span>
+                  ${ctrlBadge()}
+                </div>
+                ${item.nhCode||item.dosage?`<div style="font-size:13px;color:var(--sec);margin-bottom:4px">${item.nhCode?'健保碼：'+esc(item.nhCode):''}${item.nhCode&&item.dosage?' · ':''}${item.dosage?'劑量：'+esc(item.dosage):''}</div>`:''}
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+                  ${supBadge(item.supplier)}
+                  ${item.bonus?`<span class="o-badge" style="background:var(--orangeBg);color:var(--orange)">搭贈 ${esc(item.bonus)}</span>`:''}
+                </div>
+                ${infoLine(item)}
+                ${item.note?`<div style="font-size:13px;color:var(--lb);margin-top:3px">${esc(item.note)}</div>`:''}
+                <div style="font-size:12px;color:var(--lb);margin-top:6px;font-weight:400">${item.createdAt||''}</div>
+              </div>
+              <button class="o-status-btn" style="background:${hsc.bg};color:${hsc.tx}" onclick="ordCyc('${item.id}')"><span class="o-dot" style="background:${hsc.dot}"></span>${item.status}</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid var(--sepL)">
+              ${item.status==='已到貨'?`<button class="o-action" style="color:var(--orange);font-weight:600" onclick="ordReorder('${item.id}')">🔄 再叫貨</button>`:''}
+              <button class="o-action" onclick="ordEd('${item.id}')">編輯</button>
+              <button class="o-action red" onclick="ordConfirmDel('${item.id}')">刪除</button>
+            </div>
+          </div>`;
+        });
+      }
+      h+=`</div>`;
     });
-    if (wasFocused) { si.focus(); si.setSelectionRange(si.value.length, si.value.length); }
   }
-  if (!wasFocused) window.scrollTo(0,0);
+  h+=`</div><div style="height:40px"></div></div>`;
+  return h;
 }
-
-function updateListDOM() {
-  const s = state;
-  const filtered = s.patients.filter(p=>
-    p.name.toLowerCase().includes(s.search.toLowerCase())||
-    (p.prescriptions||[]).some(rx=>(rx.name||'').toLowerCase().includes(s.search.toLowerCase()))
-  );
-  const urgent = s.patients.filter(p=>hasChronic(p))
-    .map(p=>{ const n=nextRef(p); return n?{p,d:daysTo(n.startDate),n}:null; })
-    .filter(Boolean).filter(r=>r.d<=7).sort((a,b)=>a.d-b.d);
-
-  const urgentEl = document.getElementById('urgent-section');
-  if (urgentEl) {
-    if (!s.search && urgent.length) {
-      urgentEl.style.display='';
-      urgentEl.innerHTML=urgent.slice(0,5).map(r=>`<div class="urgent-item" style="background:${r.d<0?"var(--dbg)":"var(--wbg)"}" onclick="goDetail('${r.p.id}')"><div><strong>${esc(r.p.name)}</strong><div style="font-size:11px;color:var(--ts);margin-top:1px">${esc(fmtS(r.n.startDate))}~${esc(fmtS(r.n.endDate))}</div></div>${refillBadgeHTML(r.p)}</div>`).join('');
-    } else { urgentEl.style.display='none'; }
-  }
-
-  const listEl = document.getElementById('patient-list');
-  if (listEl) {
-    listEl.innerHTML = !filtered.length
-      ? `<div class="empty"><div class="empty-icon">${s.search?'🔍':'👋'}</div><p>${s.search?'找不到符合的客人':'尚無客人資料'}</p></div>`
-      : `<div class="list-gap">${filtered.map(p=>`<button class="patient-item" onclick="goDetail('${p.id}')"><div class="avatar">${esc((p.name||'?')[0])}</div><div style="flex:1;min-width:0"><div class="flex items-center gap-6 wrap">${esc(p.name)} ${contactBadgeHTML(p.contactMethod)}</div><div style="font-size:12px;color:var(--ts);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((p.prescriptions||[]).map(rx=>rx.name).filter(Boolean).join('、'))||'尚無處方'}</div><div style="margin-top:3px">${hasChronic(p)?refillBadgeHTML(p):''}</div></div><span style="color:var(--ts);font-size:18px">›</span></button>`).join('')}</div>`;
-  }
-
-  const countEl = document.getElementById('patient-count');
-  if (countEl) countEl.textContent = filtered.length + ' 位客人';
+function renderOrdForm(){const it=S.oEdit||{name:'',nhCode:'',dosage:'',supplier:'業務',qty:'',bonus:'',stock:'',status:'未叫貨',note:'',controlled:false},isE=S.oEdit&&S.orders.some(i=>i.id===S.oEdit.id);
+  const lastStock=it.name?ordLatestStock(it.name):null;
+  const isCustomSup=it.supplier&&!['業務','大中盤','小中盤','其他'].includes(it.supplier);
+  const supVal=isCustomSup?it.supplier:(it.supplier||'業務');
+  const supIsOther=supVal==='其他'||isCustomSup;
+  return`<div><div class="nav"><button class="nav-back" onclick="S.oView='list';S.oEdit=null;render()">${IBack} 返回</button><div class="nav-title">${isE?'編輯藥品':'新增藥品'}</div></div><div style="padding:0 16px 40px">
+  <div class="form-group"><label class="lbl">藥品名稱</label><input id="of-name" class="inp" value="${esc(it.name)}"></div>
+  <div class="form-group"><div class="row2"><div><label class="lbl">健保碼</label><input id="of-nhcode" class="inp" value="${esc(it.nhCode||'')}" placeholder="例：AC57216100"></div><div><label class="lbl">劑量</label><input id="of-dosage" class="inp" value="${esc(it.dosage||'')}" placeholder="例：500mg"></div></div></div>
+  <div class="form-group"><label style="font-size:15px;color:var(--sec);display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 0"><input type="checkbox" id="of-ctrl" ${it.controlled?'checked':''} style="width:20px;height:20px"> <span style="font-weight:600;color:${it.controlled?'var(--red)':'var(--sec)'}">⚠️ 管制藥品</span></label></div>
+  <div class="form-group"><label class="lbl">供應商</label><div class="o-sup-btns">${['業務','大中盤','小中盤','其他'].map(s=>`<button class="${(s==='其他'?supIsOther:supVal===s)?'on':''}" data-sup="${s}" onclick="document.querySelectorAll('[data-sup]').forEach(b=>b.classList.remove('on'));this.classList.add('on');const ci=document.getElementById('of-custom-sup');if('${s}'==='其他'){ci.style.display='block';ci.focus();}else{ci.style.display='none';ci.value='';}">${s}</button>`).join('')}</div><input id="of-custom-sup" class="inp" style="margin-top:8px;display:${supIsOther?'block':'none'}" value="${isCustomSup?esc(it.supplier):''}" placeholder="輸入廠商名稱"></div>
+  <div class="form-group"><div class="row2"><div><label class="lbl">叫貨量</label><input id="of-qty" class="inp" value="${esc(it.qty)}"></div><div><label class="lbl">搭贈</label><input id="of-bonus" class="inp" value="${esc(it.bonus)}"></div></div></div>
+  <div class="form-group"><label class="lbl">原庫存${lastStock!=null&&!it.stock?` <span style="color:var(--green);font-weight:400">（上次到貨後：${lastStock}）</span>`:''}</label><input id="of-stock" class="inp" type="number" inputmode="numeric" value="${esc(it.stock||'')}" placeholder="${lastStock!=null?'上次到貨後：'+lastStock:'目前庫存數量'}"></div>
+  <div class="form-group"><label class="lbl">叫貨狀態</label><div class="o-stat-btns">${STATUS_ORDER.map(s=>{const sc=SC[s];return`<button data-stat="${s}" style="${it.status===s?`background:${sc.bg};color:${sc.tx};border-color:${sc.dot};font-weight:600`:''}" onclick="document.querySelectorAll('[data-stat]').forEach(b=>b.style.cssText='');this.style.cssText='background:${sc.bg};color:${sc.tx};border-color:${sc.dot};font-weight:600'"><span class="o-dot" style="background:${sc.dot}"></span> ${s}</button>`;}).join('')}</div></div>
+  <div class="form-group"><label class="lbl">備註</label><textarea id="of-note" class="inp" style="min-height:60px;resize:vertical">${esc(it.note)}</textarea></div>
+  <button class="save-btn" onclick="ordSave()">${isE?'更新':'新增'}</button>
+  ${isE?`<button class="del-btn" onclick="ordConfirmDel('${it.id}')">刪除此藥品</button>`:''}</div></div>`;}
+function ordNewF(){S.oEdit=null;S.oView='form';render();}
+function ordEd(id){S.oEdit={...S.orders.find(i=>i.id===id)};S.oView='form';render();}
+function ordConfirmDel(id){const item=S.orders.find(i=>i.id===id);document.body.insertAdjacentHTML('beforeend',`<div class="overlay" id="ord-del-modal" onclick="document.getElementById('ord-del-modal').remove()"><div class="modal" onclick="event.stopPropagation()"><h3 style="font-size:17px;font-weight:600;margin-bottom:8px">確定刪除？</h3><p style="font-size:14px;color:var(--sec);margin-bottom:18px">「${esc(item?.name||'')}」將被刪除</p><div style="display:flex;gap:10px"><button class="btn-gray" style="flex:1" onclick="document.getElementById('ord-del-modal').remove()">取消</button><button class="btn-blue" style="flex:1;background:var(--red)" onclick="document.getElementById('ord-del-modal').remove();ordDel('${id}')">刪除</button></div></div></div>`);}
+function ordDel(id){const item=S.orders.find(i=>i.id===id);const name=item?.name;S.orders=S.orders.filter(i=>i.id!==id);if(name)recalcChain(name);persistOrd(S.orders);S.oView='list';S.oEdit=null;showToast('已刪除');}
+function recalcChain(drugName){
+  const chain=S.orders.filter(i=>i.name===drugName).sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||''));
+  if(!chain.length)return;
+  let runningStock=parseInt(chain[0].stock)||0;
+  chain.forEach((item,idx)=>{
+    if(idx===0){item._origStock=parseInt(item.stock)||0;}
+    else{item._origStock=runningStock;}
+    if(item.status==='已到貨'){
+      const added=(parseInt(item.qty)||0)+(parseInt(item.bonus)||0);
+      item.currentStock=item._origStock+added;
+      runningStock=item.currentStock;
+    } else {
+      item.currentStock=null;
+    }
+  });
+  const base=parseInt(chain[0].stock)||0;
+  let parts=[String(base)];
+  chain.forEach(item=>{
+    if(item.status==='已到貨'){
+      const q=parseInt(item.qty)||0,b=parseInt(item.bonus)||0;
+      if(b>0)parts.push('('+q+'+'+b+')');
+      else if(q>0)parts.push(String(q));
+    }
+  });
+  const formula=parts.length>1?parts.join(' + ')+' = '+runningStock:'';
+  const hasArrived=chain.some(i=>i.status==='已到貨');
+  chain.forEach(item=>{
+    item._groupCurrentStock=runningStock;
+    item._hasArrived=hasArrived;
+    item._formula=formula;
+  });
 }
-
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
+function ordCyc(id){
+  S.orders=S.orders.map(i=>{if(i.id!==id)return i;const idx=STATUS_ORDER.indexOf(i.status);const ns=STATUS_ORDER[(idx+1)%STATUS_ORDER.length];return{...i,status:ns,updatedAt:now()};});
+  const item=S.orders.find(i=>i.id===id);
+  if(item)recalcChain(item.name);
+  persistOrd(S.orders);
+}
+function ordReorder(id){
+  const old=S.orders.find(i=>i.id===id);if(!old)return;
+  const newStock=old._groupCurrentStock!=null?String(old._groupCurrentStock):(old.currentStock!=null?String(old.currentStock):'');
+  S.oEdit={name:old.name,nhCode:old.nhCode||'',dosage:old.dosage||'',supplier:old.supplier,qty:'',bonus:'',stock:newStock,status:'未叫貨',note:'',controlled:old.controlled||false};
+  S.oView='form';render();
+}
+function ordDoImp(){const t=document.getElementById('o-imp-txt'),items=ordParse(t?t.value:'');if(!items.length){showToast('無法解析');return;}S.orders=[...items,...S.orders];const names=[...new Set(items.map(i=>i.name))];names.forEach(n=>recalcChain(n));persistOrd(S.orders);showToast(`已匯入 ${items.length} 筆`);S.oImportMode=false;}
+function ordSave(){const name=(document.getElementById('of-name')?.value||'').trim();if(!name){alert('請輸入藥品名稱');return;}
+  let sup=document.querySelector('[data-sup].on')?.dataset.sup||'業務';
+  const customSup=(document.getElementById('of-custom-sup')?.value||'').trim();
+  if(sup==='其他'&&customSup)sup=customSup;
+  const stat=[...document.querySelectorAll('[data-stat]')].find(b=>b.style.fontWeight==='600')?.dataset.stat||'未叫貨';
+  const ctrl=document.getElementById('of-ctrl')?.checked||false;
+  const nhCode=(document.getElementById('of-nhcode')?.value||'').trim();
+  const dosage=(document.getElementById('of-dosage')?.value||'').trim();
+  const stockVal=(document.getElementById('of-stock')?.value||'').trim();
+  const finalStock=stockVal||(ordLatestStock(name)!=null?String(ordLatestStock(name)):'');
+  const data={name,nhCode,dosage,controlled:ctrl,supplier:sup,qty:(document.getElementById('of-qty')?.value||'').trim(),bonus:(document.getElementById('of-bonus')?.value||'').trim(),stock:finalStock,status:stat,note:(document.getElementById('of-note')?.value||'').trim()};
+  if(S.oEdit?.id){S.orders=S.orders.map(i=>i.id===S.oEdit.id?{...i,...data,updatedAt:now()}:i);}
+  else{S.orders.unshift({...data,id:uid(),createdAt:now(),updatedAt:now()});}
+  recalcChain(name);
+  persistOrd(S.orders);showToast(S.oEdit?.id?'已更新':'已新增');
+  S.oView='list';S.oEdit=null;render();}
+function render(){const app=document.getElementById('app'),wf=document.activeElement?.id;let h='';if(S.module==='home')h=renderHome();else if(S.module==='rx'){if(S.view==='list')h=renderRxList();else if(S.view==='detail')h=renderRxDet();else h=renderRxForm();}else{if(S.oView==='list')h=renderOrdList();else h=renderOrdForm();}app.innerHTML=h;const si=document.getElementById('search-inp');if(si){si.addEventListener('input',function(){S.search=this.value;render();});if(wf==='search-inp'){si.focus();si.setSelectionRange(si.value.length,si.value.length);}}const oi=document.getElementById('o-search');if(oi){oi.addEventListener('input',function(){S.oSearch=this.value;render();});if(wf==='o-search'){oi.focus();oi.setSelectionRange(oi.value.length,oi.value.length);}}if(wf!=='search-inp'&&wf!=='o-search')window.scrollTo(0,0);}
+[...new Set(S.orders.map(i=>i.name))].forEach(n=>recalcChain(n));
 render();
 </script>
 </body>
