@@ -65,27 +65,6 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none;color:#1C1C1E
 .o-sup-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.o-sup-btns button{padding:8px 4px;font-size:13px;border-radius:8px;font-weight:500;background:var(--sepL);color:var(--sec);border:2px solid transparent}.o-sup-btns button.on{background:#F5E6D3;color:#8B5E3C;border-color:#8B5E3C}
 .o-stat-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.o-stat-btns button{padding:8px 4px;font-size:13px;border-radius:8px;font-weight:500;background:var(--sepL);color:var(--sec);border:2px solid transparent}
 #app>div{animation:fadeIn .2s ease}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.ai-panel{position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;z-index:1000;background:#F2F2F7;display:flex;flex-direction:column}
-.ai-header{background:linear-gradient(135deg,#007AFF,#5856D6);padding:12px 16px 10px;flex-shrink:0}
-.ai-header-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.ai-header-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
-.ai-header-title{color:#fff;font-size:18px;font-weight:700;flex:1}
-.ai-close{background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:14px;padding:5px 12px;border-radius:14px;font-weight:500;cursor:pointer}
-.ai-ctx-inp{width:100%;padding:8px 12px;border-radius:10px;border:none;font-size:14px;background:rgba(255,255,255,0.2);color:#fff;outline:none;box-sizing:border-box;font-family:inherit}
-.ai-ctx-inp::placeholder{color:rgba(255,255,255,0.6)}
-.ai-chat{flex:1;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch}
-.ai-welcome{text-align:center;padding:40px 20px}
-.ai-msg-row{display:flex;margin-bottom:8px}
-.ai-user{max-width:80%;padding:10px 14px;border-radius:18px 18px 4px 18px;background:linear-gradient(135deg,#007AFF,#5856D6);color:#fff;font-size:15px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
-.ai-bot{max-width:85%;padding:10px 14px;border-radius:18px 18px 18px 4px;background:#fff;color:#1C1C1E;font-size:15px;line-height:1.55;white-space:pre-wrap;word-break:break-word;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-.ai-quick-bar{flex-shrink:0;border-top:1px solid #E5E5EA;background:#F2F2F7;padding:6px 0}
-.ai-quick-scroll{display:flex;gap:6px;overflow-x:auto;padding:2px 12px;-webkit-overflow-scrolling:touch}
-.ai-quick-btn{flex-shrink:0;padding:6px 14px;border-radius:16px;border:1.5px solid var(--blue);background:#fff;color:var(--blue);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
-.ai-input-bar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:8px 12px;padding-bottom:max(8px,env(safe-area-inset-bottom));background:#fff;border-top:1px solid #E5E5EA}
-.ai-text-inp{flex:1;padding:10px 14px;border-radius:20px;border:1.5px solid #E5E5EA;font-size:15px;outline:none;font-family:inherit;background:#F2F2F7}
-.ai-send{width:38px;height:38px;border-radius:19px;border:none;background:linear-gradient(135deg,#007AFF,#5856D6);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-@keyframes aiBlink{0%,80%,100%{opacity:.3}40%{opacity:1}}
-.ai-dot{font-size:10px;color:#8E8E93;animation:aiBlink 1.2s infinite}
 @media(prefers-color-scheme:dark){html,body{background:#F2F2F7!important;color:#1C1C1E!important}input,textarea,select{background:#FFFFFF!important;color:#1C1C1E!important;border-color:#D1D1D6!important}.s-card,.o-card,.hcard,.modal,.imp-panel,.o-import,.rx-form-card{background:#FFFFFF!important;color:#1C1C1E!important}.nav{background:linear-gradient(135deg,#1B6B4A,#2D9D6F)!important}.search-box input{background:#FFFFFF!important;color:#1C1C1E!important}.o-stat-item{background:#FFFFFF!important;color:#1C1C1E!important}.prog-box{background:#FAFAFA!important}}
 </style>
 </head>
@@ -113,7 +92,7 @@ const SUPPLIERS=["業務","大中盤","小中盤","其他"],STATUS_ORDER=["未�
 const SC={"未叫貨":{bg:"#FFEBEB",tx:"#FF3B30",dot:"#FF3B30"},"已叫貨":{bg:"#E8F0FE",tx:"#0055D4",dot:"#007AFF"},"已到貨":{bg:"#E8F8EC",tx:"#1B7A2E",dot:"#34C759"}};
 const aC=['#FF3B30','#FF9500','#FFCC00','#34C759','#007AFF','#AF52DE','#FF2D55','#5AC8FA'];
 function aColor(n){let h=0;for(let i=0;i<(n||'').length;i++)h=n.charCodeAt(i)+((h<<5)-h);return aC[Math.abs(h)%aC.length];}
-let S={module:'home',patients:loadRx(),view:'list',sel:null,form:null,search:'',showImp:false,impTxt:'',impMsg:'',isReview:false,delTarget:null,undoStack:[],orders:loadOrd(),oView:'list',oEdit:null,oSearch:'',oFilterSup:'全部',oFilterStat:'全部',oShowFilter:false,oImportMode:false,oExpanded:{},aiOpen:false,aiMessages:[],aiLoading:false,aiDrugCtx:''};
+let S={module:'home',patients:loadRx(),view:'list',sel:null,form:null,search:'',showImp:false,impTxt:'',impMsg:'',isReview:false,delTarget:null,undoStack:[],orders:loadOrd(),oView:'list',oEdit:null,oSearch:'',oFilterSup:'全部',oFilterStat:'全部',oShowFilter:false,oImportMode:false,oExpanded:{}};
 function persistRx(a){S.undoStack.push(JSON.stringify(S.patients));if(S.undoStack.length>20)S.undoStack.shift();S.patients=a;saveRx(a);render();}
 if(!S.ordUndoStack)S.ordUndoStack=[];
 function persistOrd(a){S.ordUndoStack.push(JSON.stringify(S.orders));if(S.ordUndoStack.length>20)S.ordUndoStack.shift();S.orders=a;saveOrd(a);render();}
@@ -125,7 +104,7 @@ function renderHome(){const rc=S.patients.length,urg=S.patients.filter(p=>hasChr
 function goModule(m){S.module=m;if(m==='rx'){S.view='list';S.sel=null;}if(m==='order'){S.oView='list';S.oEdit=null;}render();}
 function goHome(){S.module='home';render();}
 function renderRxList(){const f=S.patients.filter(p=>p.name.toLowerCase().includes(S.search.toLowerCase())||(p.prescriptions||[]).some(rx=>(rx.name||'').toLowerCase().includes(S.search.toLowerCase())));const urg=S.patients.filter(p=>hasChronic(p)).map(p=>{const n=nextRef(p);return n?{p,d:daysTo(n.startDate),n}:null;}).filter(Boolean).filter(r=>r.d<=7).sort((a,b)=>a.d-b.d);return`<div><div class="nav"><button class="nav-back" onclick="goHome()">${IBack} 首頁</button><div class="nav-title">慢箋管理</div><button class="nav-btn" onclick="S.showImp=!S.showImp;render()">匯入</button><button class="nav-btn" onclick="rxNew()">新增</button></div><div class="search-box">${ISearch}<input id="search-inp" type="text" inputmode="search" placeholder="搜尋姓名或藥品" value="${esc(S.search)}" autocomplete="off" autocorrect="off"><button id="rx-search-clear" class="search-clear" style="display:${S.search?'flex':'none'}" onclick="S.search='';render()">✕</button></div>${S.showImp?`<div class="imp-panel"><div style="font-size:15px;font-weight:600;margin-bottom:8px">貼上 JSON 匯入</div><textarea id="imp-txt" class="inp" rows="4" style="font-family:monospace;font-size:13px;resize:vertical" placeholder="貼上 Claude 給的 JSON…">${esc(S.impTxt)}</textarea>${S.impMsg?`<div style="margin-top:6px;font-size:13px;color:var(--red)">${esc(S.impMsg)}</div>`:''}<div style="display:flex;gap:8px;margin-top:10px"><button class="btn-blue" style="flex:1" onclick="rxImp()">匯入</button><button class="btn-gray" onclick="S.showImp=false;S.impTxt='';S.impMsg='';render()">取消</button></div></div>`:''}${urg.length?`<div id="rx-urgent" class="section"><div class="section-label">⚠ 近期需領藥</div><div class="s-card">${urg.slice(0,5).map(r=>`<div class="s-row" style="cursor:pointer" onclick="rxDet('${r.p.id}')"><span style="font-size:15px;font-weight:500;flex:1">${esc(r.p.name)}<br><span style="font-size:12px;color:var(--lb)">${esc(fmtS(r.n.startDate))}~${esc(fmtS(r.n.endDate))}</span></span>${rBadge(r.p)}</div>`).join('')}</div></div>`:''}<div class="section"><div class="section-label"><span id="rx-count">${f.length} 位客人</span></div><div id="rx-patient-list">${f.length?`<div class="s-card">${f.map(p=>`<div class="p-item" onclick="rxDet('${p.id}')"><div class="p-avatar" style="background:${aColor(p.name)}">${esc((p.name||'?')[0])}</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px">${esc(p.name)} ${cBadge(p.contactMethod)}</div><div style="font-size:13px;color:var(--lb);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((p.prescriptions||[]).map(rx=>rx.name).filter(Boolean).join('、'))||'尚無處方'}</div>${hasChronic(p)?`<div style="margin-top:3px">${rBadge(p)}</div>`:''}</div><span style="color:var(--sep);font-size:18px">›</span></div>`).join('')}</div>`:`<div style="text-align:center;padding:40px;color:var(--lb)"><div style="font-size:40px;margin-bottom:8px">${S.search?'🔍':'👋'}</div>${S.search?'找不到符合的客人':'尚無客人資料'}</div>`}</div></div></div>`;}
-function renderRxDet(){const p=S.patients.find(x=>x.id===S.sel);if(!p){S.view='list';return renderRxList();}const cRx=(p.prescriptions||[]).filter(rx=>rx.isChronic),gRx=(p.prescriptions||[]).filter(rx=>!rx.isChronic),total=p.refillSchedule?.length||0,used=p.usedRefills||0,pct=total?(used/total)*100:0;const allDrugs=(p.prescriptions||[]).map(rx=>rx.name).filter(Boolean).join('、');return`<div><div class="nav"><button class="nav-back" onclick="S.view='list';S.sel=null;render()">${IBack} 返回</button><div class="nav-title"></div><button class="nav-btn" style="background:rgba(88,86,214,0.6)" onclick="aiOpen('${esc(allDrugs)}')">🤖 問AI</button><button class="nav-btn" onclick="rxEditF('${p.id}')">編輯</button></div><div style="text-align:center;padding:16px 20px"><div class="p-avatar" style="width:72px;height:72px;font-size:28px;border-radius:50%;margin:0 auto 10px;background:${aColor(p.name)}">${esc((p.name||'?')[0])}</div><div style="font-size:22px;font-weight:700">${esc(p.name)} ${cBadge(p.contactMethod)}</div>${p.phone?`<div style="color:var(--lb);font-size:14px;margin-top:4px">${esc(p.phone)}</div>`:''}${p.notes?`<div style="color:var(--sec);font-size:13px;margin-top:4px;line-height:1.5">${esc(p.notes)}</div>`:''}</div><div class="section">${cRx.length?`<div class="section-label">慢箋藥品</div><div class="s-card">${cRx.map(rx=>`<div class="rx-block"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:15px">${esc(rx.name)}</div>${rx.dosage?`<div style="font-size:13px;color:var(--lb);margin-top:2px">${esc(rx.dosage)}</div>`:''}</div><span class="badge" style="background:var(--orangeBg);color:var(--orange)">慢箋</span></div>${rx.note?`<div style="font-size:12px;color:var(--lb);margin-top:4px">${esc(rx.note)}</div>`:''}</div>`).join('')}</div>${total>0?`<div class="prog-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:14px;font-weight:600">領藥進度</span>${rBadge(p)}</div><div style="font-size:13px;color:var(--lb);margin-bottom:4px">已領 ${used}/${total} 次</div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>${tl(p)}${used<total?`<button onclick="rxMark('${p.id}')" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;width:100%;padding:11px;background:var(--green);color:#fff;border-radius:10px;font-size:15px;font-weight:600;border:none">✓ 標記已領藥（第${used+1}次）</button>`:''}</div>`:''}`:''}${gRx.length?`<div class="section-label">一般處方藥</div><div class="s-card">${gRx.map(rx=>`<div class="rx-block"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:15px">${esc(rx.name)}</div>${rx.dosage?`<div style="font-size:13px;color:var(--lb);margin-top:2px">${esc(rx.dosage)}</div>`:''}</div><span class="badge" style="background:var(--blueBg);color:var(--blue)">一般</span></div>${rx.note?`<div style="font-size:12px;color:var(--lb);margin-top:4px">${esc(rx.note)}</div>`:''}</div>`).join('')}</div>`:''}${!(p.prescriptions||[]).length?`<div style="text-align:center;padding:20px;color:var(--lb)">尚無處方</div>`:''}<div style="padding:16px 0"><button class="del-btn" onclick="rxConfDel('${p.id}')">刪除此客人</button></div></div></div>`;}
+function renderRxDet(){const p=S.patients.find(x=>x.id===S.sel);if(!p){S.view='list';return renderRxList();}const cRx=(p.prescriptions||[]).filter(rx=>rx.isChronic),gRx=(p.prescriptions||[]).filter(rx=>!rx.isChronic),total=p.refillSchedule?.length||0,used=p.usedRefills||0,pct=total?(used/total)*100:0;return`<div><div class="nav"><button class="nav-back" onclick="S.view='list';S.sel=null;render()">${IBack} 返回</button><div class="nav-title"></div><button class="nav-btn" onclick="rxEditF('${p.id}')">編輯</button></div><div style="text-align:center;padding:16px 20px"><div class="p-avatar" style="width:72px;height:72px;font-size:28px;border-radius:50%;margin:0 auto 10px;background:${aColor(p.name)}">${esc((p.name||'?')[0])}</div><div style="font-size:22px;font-weight:700">${esc(p.name)} ${cBadge(p.contactMethod)}</div>${p.phone?`<div style="color:var(--lb);font-size:14px;margin-top:4px">${esc(p.phone)}</div>`:''}${p.notes?`<div style="color:var(--sec);font-size:13px;margin-top:4px;line-height:1.5">${esc(p.notes)}</div>`:''}</div><div class="section">${cRx.length?`<div class="section-label">慢箋藥品</div><div class="s-card">${cRx.map(rx=>`<div class="rx-block"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:15px">${esc(rx.name)}</div>${rx.dosage?`<div style="font-size:13px;color:var(--lb);margin-top:2px">${esc(rx.dosage)}</div>`:''}</div><span class="badge" style="background:var(--orangeBg);color:var(--orange)">慢箋</span></div>${rx.note?`<div style="font-size:12px;color:var(--lb);margin-top:4px">${esc(rx.note)}</div>`:''}</div>`).join('')}</div>${total>0?`<div class="prog-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:14px;font-weight:600">領藥進度</span>${rBadge(p)}</div><div style="font-size:13px;color:var(--lb);margin-bottom:4px">已領 ${used}/${total} 次</div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>${tl(p)}${used<total?`<button onclick="rxMark('${p.id}')" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;width:100%;padding:11px;background:var(--green);color:#fff;border-radius:10px;font-size:15px;font-weight:600;border:none">✓ 標記已領藥（第${used+1}次）</button>`:''}</div>`:''}`:''}${gRx.length?`<div class="section-label">一般處方藥</div><div class="s-card">${gRx.map(rx=>`<div class="rx-block"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:15px">${esc(rx.name)}</div>${rx.dosage?`<div style="font-size:13px;color:var(--lb);margin-top:2px">${esc(rx.dosage)}</div>`:''}</div><span class="badge" style="background:var(--blueBg);color:var(--blue)">一般</span></div>${rx.note?`<div style="font-size:12px;color:var(--lb);margin-top:4px">${esc(rx.note)}</div>`:''}</div>`).join('')}</div>`:''}${!(p.prescriptions||[]).length?`<div style="text-align:center;padding:20px;color:var(--lb)">尚無處方</div>`:''}<div style="padding:16px 0"><button class="del-btn" onclick="rxConfDel('${p.id}')">刪除此客人</button></div></div></div>`;}
 function renderRxForm(){const f=S.form,isE=S.patients.some(p=>p.id===f.id),title=S.isReview?'確認匯入':isE?'編輯客人':'新增客人',fHC=(f.prescriptions||[]).some(rx=>rx.isChronic);const cO=[{v:'line',l:'LINE'},{v:'phone',l:'電話'},{v:'both',l:'LINE+電話'},{v:'',l:'未設定'}];return`<div><div class="nav"><button class="nav-back" onclick="S.view=S.sel?'detail':'list';S.isReview=false;render()">${IBack} 返回</button><div class="nav-title">${esc(title)}</div></div>${S.isReview?`<div style="margin:0 16px 12px;padding:12px;background:var(--orangeBg);border-radius:10px;font-size:13px;color:var(--orange);font-weight:500">👀 請檢查後儲存</div>`:''}<div style="padding:0 16px 40px"><div class="form-group"><label class="lbl">姓名</label><input class="inp" id="f-name" value="${esc(f.name)}"></div><div class="form-group"><label class="lbl">電話</label><input class="inp" id="f-phone" value="${esc(f.phone||'')}"></div><div class="form-group"><label class="lbl">聯絡方式</label><div class="contact-btns">${cO.map(o=>`<button class="contact-btn ${f.contactMethod===o.v?'on':''}" onclick="S.form.contactMethod='${o.v}';render()">${o.l}</button>`).join('')}</div></div><div class="form-group"><label class="lbl">備註</label><textarea class="inp" rows="2" style="resize:vertical" oninput="S.form.notes=this.value">${esc(f.notes||'')}</textarea></div><div class="form-group"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><label class="lbl" style="margin:0">處方藥</label><button class="btn-ghost" onclick="S.form.prescriptions.push({name:'',dosage:'',isChronic:false,note:''});render()">${IPlus} 新增</button></div>${(f.prescriptions||[]).map((rx,i)=>`<div class="rx-form-card"><button onclick="S.form.prescriptions.splice(${i},1);render()" style="position:absolute;top:8px;right:8px;background:none;color:var(--red);opacity:.5;padding:4px">${ITrash}</button><div class="row2" style="margin-bottom:8px"><div><label class="lbl">藥品名稱</label><input class="inp" value="${esc(rx.name||'')}" oninput="S.form.prescriptions[${i}].name=this.value"></div><div><label class="lbl">用法用量</label><input class="inp" value="${esc(rx.dosage||'')}" oninput="S.form.prescriptions[${i}].dosage=this.value"></div></div><label style="font-size:13px;color:var(--sec);display:flex;align-items:center;gap:6px;margin-bottom:8px"><input type="checkbox" ${rx.isChronic?'checked':''} onchange="S.form.prescriptions[${i}].isChronic=this.checked;render()"> 慢箋</label><div><label class="lbl">備註</label><input class="inp" value="${esc(rx.note||'')}" oninput="S.form.prescriptions[${i}].note=this.value"></div></div>`).join('')}</div>${fHC?`<div class="form-group"><div style="padding:14px;background:var(--greenBg);border-radius:12px"><div style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:8px">慢箋領藥區間</div>${(f.refillSchedule||[]).map((sc,si)=>`<div class="sched-row"><span style="font-size:13px;font-weight:500;color:var(--sec);min-width:40px">第${sc.refillNumber}次</span><input type="date" class="inp" style="flex:1;padding:8px;font-size:13px" value="${esc(sc.startDate||'')}" onchange="S.form.refillSchedule[${si}].startDate=this.value"><span style="color:var(--lb)">~</span><input type="date" class="inp" style="flex:1;padding:8px;font-size:13px" value="${esc(sc.endDate||'')}" onchange="S.form.refillSchedule[${si}].endDate=this.value"><button onclick="S.form.refillSchedule.splice(${si},1);S.form.refillSchedule=S.form.refillSchedule.map((x,i)=>({...x,refillNumber:i+1}));render()" style="background:none;color:var(--red);opacity:.5;padding:2px">${ITrash}</button></div>`).join('')}<button onclick="S.form.refillSchedule.push({refillNumber:S.form.refillSchedule.length+1,startDate:'',endDate:''});render()" class="btn-ghost" style="margin-top:4px;font-size:13px">${IPlus} 新增區間</button><div style="margin-top:8px"><label class="lbl">已領次數</label><input type="number" class="inp" style="width:80px" value="${f.usedRefills||0}" min="0" onchange="S.form.usedRefills=parseInt(this.value)||0"></div></div></div>`:''}<button class="save-btn" onclick="rxSave()">${S.isReview?'確認儲存':'儲存'}</button></div></div>`;}
 function rxNew(){S.form={id:uid(),name:'',phone:'',contactMethod:'',prescriptions:[],notes:'',refillSchedule:[],usedRefills:0};S.view='form';S.isReview=false;render();}
 function rxDet(id){S.view='detail';S.sel=id;render();}
@@ -167,7 +146,7 @@ function renderOrdList(){
   const f=S.orders.filter(i=>{if(S.oSearch&&!i.name.toLowerCase().includes(S.oSearch.toLowerCase())&&!(i.note||'').toLowerCase().includes(S.oSearch.toLowerCase()))return false;if(S.oFilterSup!=='全部'&&i.supplier!==S.oFilterSup)return false;if(S.oFilterStat!=='全部'&&i.status!==S.oFilterStat)return false;return true;});
   const st={t:S.orders.length,p:S.orders.filter(i=>i.status==='未叫貨').length,o:S.orders.filter(i=>i.status==='已叫貨').length,a:S.orders.filter(i=>i.status==='已到貨').length};
   const groups=ordGrouped(f);
-  let h=`<div><div class="nav"><button class="nav-back" onclick="goHome()">${IBack}</button><div class="nav-title">叫貨管理</div><div style="display:flex;gap:4px"><button class="nav-btn" onclick="aiToggle()">🤖</button><button class="nav-btn" onclick="ordUndo()">↩</button><button class="nav-btn" onclick="ordNewF()">＋</button><button class="nav-btn" onclick="S.oImportMode=!S.oImportMode;render()">匯入</button><button class="nav-btn" onclick="ordCSV()">匯出</button></div></div>
+  let h=`<div><div class="nav"><button class="nav-back" onclick="goHome()">${IBack}</button><div class="nav-title">叫貨管理</div><div style="display:flex;gap:4px"><button class="nav-btn" onclick="ordUndo()">↩</button><button class="nav-btn" onclick="ordNewF()">＋</button><button class="nav-btn" onclick="S.oImportMode=!S.oImportMode;render()">匯入</button><button class="nav-btn" onclick="ordCSV()">匯出</button></div></div>
   <div class="o-stat-bar"><div class="o-stat-item"><div class="num">${st.t}</div><div class="lbl">全部</div></div><div class="o-stat-item"><div class="num" style="color:var(--red)">${st.p}</div><div class="lbl">未叫貨</div></div><div class="o-stat-item"><div class="num" style="color:var(--blue)">${st.o}</div><div class="lbl">已叫貨</div></div><div class="o-stat-item"><div class="num" style="color:var(--green)">${st.a}</div><div class="lbl">已到貨</div></div></div>
   <div class="search-box">${ISearch}<input id="o-search" value="${esc(S.oSearch)}" placeholder="搜尋藥品名稱" autocomplete="off" autocorrect="off"><button id="o-search-clear" class="search-clear" style="display:${S.oSearch?'flex':'none'}" onclick="S.oSearch='';render()">✕</button></div>`;
   if(S.oImportMode)h+=`<div class="o-import"><div style="font-size:15px;font-weight:600;margin-bottom:8px">貼上資料匯入</div><textarea id="o-imp-txt" class="inp" rows="4" style="font-size:13px;resize:vertical" placeholder="JSON 或 CSV"></textarea><div style="display:flex;gap:8px;margin-top:8px"><button class="btn-blue" style="flex:1" onclick="ordDoImp()">匯入</button><button class="btn-gray" onclick="S.oImportMode=false;render()">取消</button></div></div>`;
@@ -209,7 +188,6 @@ function renderOrdList(){
             ${latest.status==='已到貨'?`<button class="o-action" style="color:var(--orange);font-weight:600" onclick="ordReorder('${latest.id}')">🔄 再叫貨</button>`:''}
             <button class="o-action" onclick="ordEd('${latest.id}')">編輯</button>
             <button class="o-action red" onclick="ordConfirmDel('${latest.id}')">刪除</button>
-            <button class="o-action" style="color:#5856D6;font-weight:600" onclick="aiOpen('${esc(g.name)}')">🤖 問AI</button>
           </div>
           ${histCount>1?`<button class="o-action" style="font-weight:600" onclick="S.oExpanded['${esc(g.name)}']=!S.oExpanded['${esc(g.name)}'];render()">${expanded?'收合 ▲':'紀錄 ('+histCount+') ▼'}</button>`:''}
         </div>
@@ -494,115 +472,6 @@ function ordRenameSingleSkip(){
   S.oView='list';S.oEdit=null;S._pendingSave=null;render();
 }
 
-// === AI 查藥助手 (Gemini) ===
-const AI_KEY_STORE='pharmacy-gemini-key';
-const AI_SYS=`你是一位資深藥師助手，專門協助連鎖藥局藥師查詢藥品資訊。請用繁體中文回答。回答簡潔扼要，重點：藥品學名/商品名、適應症、常用劑量用法、主要副作用與注意事項、同成分或同類替代藥品、健保相關資訊。如問交互作用，標注嚴重程度。回答力求精準實用，適合藥局實務工作參考。不需免責聲明。`;
-const AI_QUICK=['適應症？','常見副作用？','同成分替代？','交互作用？','建議劑量？'];
-function aiGetKey(){return localStorage.getItem(AI_KEY_STORE)||'AIzaSyCMu9Tq0k9ScqTdAELdza7TqLGgW8Sehwg';}
-function aiSetKey(){
-  const cur=aiGetKey();
-  const k=prompt('請輸入 Gemini API Key\n（到 aistudio.google.com 免費申請）',cur);
-  if(k!==null){localStorage.setItem(AI_KEY_STORE,k.trim());showToast('API Key 已儲存');}
-}
-function aiOpen(drugName){S.aiOpen=true;if(drugName)S.aiDrugCtx=drugName;aiRenderPanel();}
-function aiToggle(){S.aiOpen=!S.aiOpen;aiRenderPanel();}
-function aiClear(){S.aiMessages=[];S.aiDrugCtx='';aiRenderPanel();}
-function aiRenderPanel(){
-  let old=document.getElementById('ai-panel');if(old)old.remove();
-  if(!S.aiOpen)return;
-  const msgs=S.aiMessages;
-  const hasKey=!!aiGetKey();
-  let chatH='';
-  if(!hasKey){
-    chatH=`<div class="ai-welcome"><div style="font-size:48px;margin-bottom:12px">🔑</div><div style="font-size:22px;font-weight:700;color:#1C1C1E;margin-bottom:8px">需要設定 API Key</div><div style="font-size:15px;color:#8E8E93;line-height:1.5;margin-bottom:16px">請先到 <strong>aistudio.google.com</strong><br>申請免費的 Gemini API Key</div><button onclick="aiSetKey();aiRenderPanel()" style="padding:12px 24px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer">設定 API Key</button></div>`;
-  } else if(!msgs.length){
-    chatH=`<div class="ai-welcome"><div style="font-size:48px;margin-bottom:12px">💊</div><div style="font-size:22px;font-weight:700;color:#1C1C1E;margin-bottom:8px">藥品查詢助手</div><div style="font-size:15px;color:#8E8E93;line-height:1.5">叫貨時遇到不熟的藥？<br>直接問我，即時查詢藥品資訊</div><div style="font-size:13px;color:#AEAEB2;font-style:italic;margin-top:12px">可先在上方輸入藥名，再用快速問題查詢</div></div>`;
-  } else {
-    msgs.forEach(m=>{
-      chatH+=`<div class="ai-msg-row" style="justify-content:${m.role==='user'?'flex-end':'flex-start'}"><div class="${m.role==='user'?'ai-user':'ai-bot'}">${esc(m.content)}</div></div>`;
-    });
-  }
-  if(S.aiLoading){
-    chatH+=`<div class="ai-msg-row" style="justify-content:flex-start"><div class="ai-bot"><span class="ai-dot" style="animation-delay:0s">●</span> <span class="ai-dot" style="animation-delay:.3s">●</span> <span class="ai-dot" style="animation-delay:.6s">●</span></div></div>`;
-  }
-  const panel=document.createElement('div');
-  panel.id='ai-panel';panel.className='ai-panel';
-  panel.innerHTML=`
-    <div class="ai-header">
-      <div class="ai-header-top">
-        <div class="ai-header-icon">🤖</div>
-        <span class="ai-header-title">AI 查藥助手</span>
-        <button class="ai-close" onclick="aiSetKey();aiRenderPanel()">⚙</button>
-        ${msgs.length?'<button class="ai-close" onclick="aiClear()">清除</button>':''}
-        <button class="ai-close" onclick="aiToggle()">✕</button>
-      </div>
-      <input id="ai-drug-ctx" class="ai-ctx-inp" type="text" placeholder="輸入藥名設定查詢情境（選填）" value="${esc(S.aiDrugCtx)}" autocomplete="off">
-    </div>
-    <div class="ai-chat" id="ai-chat-area">${chatH}</div>
-    <div class="ai-quick-bar"><div class="ai-quick-scroll">${AI_QUICK.map(q=>`<button class="ai-quick-btn" onclick="aiQuick('${q}')" ${S.aiLoading||!hasKey?'disabled':''}>${q}</button>`).join('')}</div></div>
-    <div class="ai-input-bar">
-      <input id="ai-input" class="ai-text-inp" type="text" placeholder="輸入藥品問題..." ${S.aiLoading||!hasKey?'disabled':''}>
-      <button class="ai-send" id="ai-send-btn" onclick="aiSendFromInput()" style="opacity:${S.aiLoading||!hasKey?'.4':'1'}"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
-    </div>`;
-  document.body.appendChild(panel);
-  const chatArea=document.getElementById('ai-chat-area');
-  if(chatArea)chatArea.scrollTop=chatArea.scrollHeight;
-  const inp=document.getElementById('ai-input');
-  const ctxInp=document.getElementById('ai-drug-ctx');
-  if(inp){
-    let composing=false;
-    inp.addEventListener('compositionstart',()=>{composing=true;});
-    inp.addEventListener('compositionend',function(){composing=false;});
-    inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!composing&&!e.isComposing){e.preventDefault();aiSendFromInput();}});
-    if(!S.aiLoading&&hasKey)inp.focus();
-  }
-  if(ctxInp){
-    ctxInp.addEventListener('input',function(){S.aiDrugCtx=this.value;});
-    ctxInp.addEventListener('compositionend',function(){S.aiDrugCtx=this.value;});
-  }
-}
-function aiQuick(q){const prefix=S.aiDrugCtx?S.aiDrugCtx:'';aiSend(prefix?prefix+q:q);}
-function aiAskDrug(name){S.aiDrugCtx=name;S.aiOpen=true;aiRenderPanel();}
-function aiSendFromInput(){const inp=document.getElementById('ai-input');if(inp)aiSend(inp.value);}
-async function aiSend(text){
-  if(!text||!text.trim()||S.aiLoading)return;
-  const key=aiGetKey();
-  if(!key){aiSetKey();return;}
-  const userMsg=text.trim();
-  S.aiMessages.push({role:'user',content:userMsg});
-  S.aiLoading=true;
-  aiRenderPanel();
-  try{
-    const ctxNote=S.aiDrugCtx?'\n\n（藥師目前正在查詢的藥品：'+S.aiDrugCtx+'）':'';
-    // Build Gemini contents array from conversation history
-    const contents=S.aiMessages.map(m=>({
-      role:m.role==='user'?'user':'model',
-      parts:[{text:m.content+(m===S.aiMessages[S.aiMessages.length-1]&&m.role==='user'?ctxNote:'')}]
-    }));
-    const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+encodeURIComponent(key),{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        system_instruction:{parts:[{text:AI_SYS}]},
-        contents:contents,
-        generationConfig:{maxOutputTokens:1024}
-      })
-    });
-    const data=await resp.json();
-    if(data.error){
-      S.aiMessages.push({role:'assistant',content:'API 錯誤：'+( data.error.message||'未知錯誤')});
-    } else {
-      const reply=(data.candidates&&data.candidates[0]?.content?.parts||[]).map(p=>p.text).join('\n')||'抱歉，無法取得回覆。';
-      S.aiMessages.push({role:'assistant',content:reply});
-    }
-  }catch(e){
-    S.aiMessages.push({role:'assistant',content:'連線錯誤：'+e.message+'\n\n如在 claude.ai 預覽中使用，請將檔案部署到 GitHub Pages 後再試。'});
-  }finally{
-    S.aiLoading=false;
-    aiRenderPanel();
-  }
-}
-// === AI 查藥助手 END ===
-
 function render(){const app=document.getElementById('app'),wf=document.activeElement?.id;let h='';if(S.module==='home')h=renderHome();else if(S.module==='rx'){if(S.view==='list')h=renderRxList();else if(S.view==='detail')h=renderRxDet();else h=renderRxForm();}else{if(S.oView==='list')h=renderOrdList();else h=renderOrdForm();}app.innerHTML=h;
 const si=document.getElementById('search-inp');
 if(si){
@@ -646,7 +515,7 @@ function ordUpdateList(){
       const infoLine=(item)=>{const os=item._origStock!=null?item._origStock:(parseInt(item.stock)||0);const osColor=os<=5?'var(--red)':os<=10?'var(--orange)':'var(--tx)';const gc=item._groupCurrentStock;const ic=item.currentStock;return`<div style="font-size:20px;color:var(--tx);line-height:2">原庫存：<strong style="color:${osColor}">${os}</strong> · 叫貨量：<strong style="color:var(--tx)">${esc(item.qty)||'—'}${item.unit?item.unit:''}</strong>${item.perUnit?' ('+item.perUnit+'顆/'+item.unit+')':''}${item.totalQty?' = <strong style="color:var(--tx)">'+item.totalQty+'顆</strong>':''}${item.bonus?' · 搭贈：<strong style="color:var(--tx)">'+esc(item.bonus)+'</strong>':''}${ic!=null?'<br>📋 <strong style="color:var(--blue)">單筆結餘：'+String(os)+' + '+String(parseInt(item.totalQty)||parseInt(item.qty)||0)+(parseInt(item.bonus)||0?' + '+String(parseInt(item.bonus)||0):'')+' = '+String(ic)+'</strong>':''}${item._hasArrived?'<br>📦 <strong style="color:var(--green)">總庫存：'+gc+'</strong>':''}</div>`;};
       const supBadge=(sup)=>`<span class="o-badge" style="background:#F5E6D3;color:#8B5E3C">${esc(sup)}</span>`;
       const ctrlBadge=()=>g.isControlled?'<span class="o-badge" style="background:var(--redBg);color:var(--red)">⚠️ 管制藥</span>':'';
-      h+=`<div class="s-card" style="margin-bottom:10px;border-radius:12px;overflow:hidden"><div class="o-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:700">1</span><span style="font-size:16px;font-weight:700;color:${nameColor}">${esc(g.name)}</span>${ctrlBadge()}</div>${latest.nhCode||latest.dosage?`<div style="font-size:13px;color:var(--sec);margin-bottom:4px">${latest.nhCode?'健保碼：'+esc(latest.nhCode):''}${latest.nhCode&&latest.dosage?' · ':''}${latest.dosage?'劑量：'+esc(latest.dosage):''}</div>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">${supBadge(latest.supplier)}${latest.bonus?`<span class="o-badge" style="background:var(--orangeBg);color:var(--orange)">搭贈 ${esc(latest.bonus)}</span>`:''}</div>${infoLine(latest)}${latest.note?`<div style="font-size:13px;color:var(--lb);margin-top:3px">${esc(latest.note)}</div>`:''}${latest.orderDate?'<div style="font-size:12px;color:var(--sec);margin-top:6px">📅 訂藥：'+latest.orderDate+'</div>':''}<div style="font-size:12px;color:var(--lb);margin-top:4px">建檔：${latest.createdAt||''}</div></div><button class="o-status-btn" style="background:${sc.bg};color:${sc.tx}" onclick="ordCyc('${latest.id}')"><span class="o-dot" style="background:${sc.dot}"></span>${latest.status}</button></div><div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--sepL)"><div style="display:flex;flex-wrap:wrap;gap:4px">${latest.status==='已到貨'?`<button class="o-action" style="color:var(--orange);font-weight:600" onclick="ordReorder('${latest.id}')">🔄 再叫貨</button>`:''}<button class="o-action" style="color:#5856D6;font-weight:600" onclick="aiOpen('${esc(g.name)}')">🤖 問AI</button><button class="o-action" onclick="ordEd('${latest.id}')">編輯</button><button class="o-action red" onclick="ordConfirmDel('${latest.id}')">刪除</button></div>${histCount>1?`<button class="o-action" style="font-weight:600" onclick="S.oExpanded['${esc(g.name)}']=!S.oExpanded['${esc(g.name)}'];render()">${expanded?'收合 ▲':'紀錄 ('+histCount+') ▼'}</button>`:''}</div></div></div>`;
+      h+=`<div class="s-card" style="margin-bottom:10px;border-radius:12px;overflow:hidden"><div class="o-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:700">1</span><span style="font-size:16px;font-weight:700;color:${nameColor}">${esc(g.name)}</span>${ctrlBadge()}</div>${latest.nhCode||latest.dosage?`<div style="font-size:13px;color:var(--sec);margin-bottom:4px">${latest.nhCode?'健保碼：'+esc(latest.nhCode):''}${latest.nhCode&&latest.dosage?' · ':''}${latest.dosage?'劑量：'+esc(latest.dosage):''}</div>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">${supBadge(latest.supplier)}${latest.bonus?`<span class="o-badge" style="background:var(--orangeBg);color:var(--orange)">搭贈 ${esc(latest.bonus)}</span>`:''}</div>${infoLine(latest)}${latest.note?`<div style="font-size:13px;color:var(--lb);margin-top:3px">${esc(latest.note)}</div>`:''}${latest.orderDate?'<div style="font-size:12px;color:var(--sec);margin-top:6px">📅 訂藥：'+latest.orderDate+'</div>':''}<div style="font-size:12px;color:var(--lb);margin-top:4px">建檔：${latest.createdAt||''}</div></div><button class="o-status-btn" style="background:${sc.bg};color:${sc.tx}" onclick="ordCyc('${latest.id}')"><span class="o-dot" style="background:${sc.dot}"></span>${latest.status}</button></div><div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--sepL)"><div style="display:flex;flex-wrap:wrap;gap:4px">${latest.status==='已到貨'?`<button class="o-action" style="color:var(--orange);font-weight:600" onclick="ordReorder('${latest.id}')">🔄 再叫貨</button>`:''}<button class="o-action" onclick="ordEd('${latest.id}')">編輯</button><button class="o-action red" onclick="ordConfirmDel('${latest.id}')">刪除</button></div>${histCount>1?`<button class="o-action" style="font-weight:600" onclick="S.oExpanded['${esc(g.name)}']=!S.oExpanded['${esc(g.name)}'];render()">${expanded?'收合 ▲':'紀錄 ('+histCount+') ▼'}</button>`:''}</div></div></div>`;
     });
   }
   el.innerHTML=h;
