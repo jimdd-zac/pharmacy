@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1B6B4A">
+<title>台灣兒童疫苗速查</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#F2F2F7;--card:#fff;--text:#1C1C1E;--sub:#6B7280;--light:#9CA3AF;--border:#E5E7EB;--green:#1B6B4A;--greenLight:#DEF7EC;--greenText:#065F46;--yellowLight:#FEF3C7;--yellowText:#92400E;--yellowBorder:#FCD34D;--blueLight:#DBEAFE;--blueText:#1E40AF;--redLight:#FEE2E2;--redText:#991B1B}
+body{font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.header{background:linear-gradient(135deg,#1B6B4A 0%,#2D9D6F 60%,#34D399 100%);padding:24px 16px 20px;text-align:center;color:#fff}
+.header h1{font-size:26px;font-weight:900;letter-spacing:1px;margin-bottom:4px}
+.header p{font-size:12px;opacity:.9}
+.tabs{display:flex;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.tabs button{flex:1;padding:11px 4px;border:none;background:0;color:var(--light);font-weight:400;font-size:12px;cursor:pointer;border-bottom:2.5px solid transparent;font-family:inherit;transition:all .2s}
+.tabs button.active{color:var(--green);font-weight:700;border-bottom-color:var(--green)}
+.content{padding:12px 12px 80px}
+.search-box{background:var(--card);border-radius:12px;padding:10px 12px;margin-bottom:10px;border:1px solid var(--border)}
+.search-box input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;outline:none;font-family:inherit}
+.filters{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border-radius:20px;border:2px solid var(--border);background:var(--card);color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+.filter-btn.active-green{border-color:var(--green);background:var(--greenLight);color:var(--greenText)}
+.filter-btn.active-yellow{border-color:#F59E0B;background:var(--yellowLight);color:var(--yellowText)}
+.age-filters{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.age-btn{padding:5px 12px;border-radius:16px;border:2px solid var(--border);background:var(--card);color:var(--sub);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
+.age-btn.active{border-color:#F59E0B;background:var(--yellowLight);color:var(--yellowText)}
+.vcard{background:var(--card);border-radius:14px;margin-bottom:8px;border:1px solid var(--border);overflow:hidden;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:all .2s}
+.vcard.expanded{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.vcard-head{display:flex;align-items:center;padding:14px;gap:12px}
+.vcard-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.vcard-info{flex:1;min-width:0}
+.vcard-name{font-size:15px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vcard-tags{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag-abbr{font-size:11px;color:var(--sub);background:var(--bg);padding:2px 8px;border-radius:6px}
+.tag-type{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px}
+.tag-type.live{background:#FFF7ED;color:#C2410C}
+.tag-type.inact{background:#EFF6FF;color:#1D4ED8}
+.tag-doses{font-size:11px;color:var(--light)}
+.arrow{font-size:14px;color:var(--light);transition:transform .2s}
+.arrow.open{transform:rotate(180deg)}
+.vcard-doses{padding:0 14px 14px;border-top:1px solid var(--border)}
+.dose-row{display:flex;gap:10px;padding:10px 0;align-items:flex-start}
+.dose-row+.dose-row{border-top:1px solid var(--bg)}
+.dose-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0}
+.dose-info{flex:1}
+.dose-age{font-size:14px;font-weight:600}
+.dose-note{font-size:12px;color:var(--sub);margin-top:3px;line-height:1.5}
+.dose-note.highlight{background:var(--yellowLight);padding:4px 8px;border-radius:6px}
+select.sel{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M2 4l4 4 4-4'/%3E%3C/svg%3E") no-repeat right 12px center/12px;color:var(--text);font-size:15px;font-family:inherit;font-weight:500;outline:none;appearance:none;-webkit-appearance:none}
+.result-box{border-radius:14px;padding:18px 16px;margin-bottom:12px}
+.result-box.green{background:#ECFDF5;border:1.5px solid #6EE7B7}
+.result-box.yellow{background:var(--yellowLight);border:1.5px solid var(--yellowBorder)}
+.result-title{font-size:17px;font-weight:800;margin-bottom:10px;line-height:1.4}
+.result-detail{font-size:14px;line-height:1.7}
+.rule-card{background:var(--card);border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:14px}
+.rule-header{padding:10px 14px;border-bottom:1px solid var(--border)}
+.rule-body{padding:10px 14px;display:flex;gap:5px;flex-wrap:wrap}
+.rule-tag{font-size:12px;font-weight:600;padding:4px 10px;border-radius:8px}
+.tl-row{display:flex;gap:12px;margin-bottom:4px}
+.tl-dot-col{display:flex;flex-direction:column;align-items:center;width:18px;flex-shrink:0}
+.tl-dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#059669,#34D399);border:3px solid var(--bg);flex-shrink:0;box-shadow:0 0 6px rgba(5,150,105,.25)}
+.tl-line{width:2px;flex:1;min-height:20px;background:linear-gradient(to bottom,#05966944,transparent)}
+.tl-card{flex:1;background:var(--card);border-radius:12px;padding:10px 14px;margin-bottom:4px;border:1px solid var(--border)}
+.tl-age{font-size:13px;font-weight:800;color:#B45309;margin-bottom:6px}
+.tl-tags{display:flex;gap:5px;flex-wrap:wrap}
+.tl-tag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.hidden{display:none}
+.empty{text-align:center;padding:40px;color:var(--light)}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>💉 台灣兒童疫苗速查</h1>
+  <p>疾管署 11401版（2025/1）｜公費常規疫苗</p>
+</div>
+<div class="tabs" id="tabs">
+  <button class="active" data-tab="schedule">📋 疫苗時程</button>
+  <button data-tab="checker">🔍 可否同打</button>
+  <button data-tab="rules">📌 接種規則</button>
+  <button data-tab="timeline">📅 月齡總表</button>
+</div>
+<div class="content" id="app"></div>
+
+<script>
+const V=[
+{id:"hepb",name:"B型肝炎疫苗",abbr:"HepB",type:"不活化",color:"#2563EB",icon:"🛡️",doses:[{d:1,age:"出生24hr內",m:0,note:"母親HBsAg(+)需同時注射HBIG"},{d:2,age:"滿1個月",m:1,note:""},{d:3,age:"滿6個月",m:6,note:"可用六合一(自費)替代"}]},
+{id:"bcg",name:"卡介苗",abbr:"BCG",type:"活性減毒",color:"#B45309",icon:"💪",special:"bcg",doses:[{d:1,age:"滿5個月",m:5,note:"建議5~8個月，皮內注射"}]},
+{id:"dtap5",name:"五合一疫苗",abbr:"DTaP-IPV-Hib",type:"不活化",color:"#7C3AED",icon:"⭐",doses:[{d:1,age:"滿2個月",m:2,note:""},{d:2,age:"滿4個月",m:4,note:""},{d:3,age:"滿6個月",m:6,note:""},{d:4,age:"滿18個月",m:18,note:"可與A肝第1劑同時接種"}]},
+{id:"pcv13",name:"肺炎鏈球菌疫苗",abbr:"PCV13",type:"不活化",color:"#0891B2",icon:"🫁",doses:[{d:1,age:"滿2個月",m:2,note:"與第2劑間隔≥8週"},{d:2,age:"滿4個月",m:4,note:""},{d:3,age:"滿12~15個月",m:12,note:"追加劑，須滿1歲後"}]},
+{id:"mmr",name:"麻疹腮腺炎德國麻疹",abbr:"MMR",type:"活性減毒",color:"#DC2626",icon:"🔴",doses:[{d:1,age:"滿12個月",m:12,note:"可與水痘同日接種"},{d:2,age:"滿5歲~入學前",m:60,note:"兩劑間隔≥4週"}]},
+{id:"varicella",name:"水痘疫苗",abbr:"Varicella",type:"活性減毒",color:"#EA580C",icon:"💧",doses:[{d:1,age:"滿12個月",m:12,note:"公費1劑"},{d:2,age:"滿4~6歲",m:48,note:"⚠️ 自費，建議接種"}]},
+{id:"je",name:"日本腦炎疫苗",abbr:"JE-CV",type:"活性減毒",color:"#059669",icon:"🧠",doses:[{d:1,age:"滿15個月",m:15,note:""},{d:2,age:"滿27個月",m:27,note:"與第1劑間隔≥12個月"}]},
+{id:"hepa",name:"A型肝炎疫苗",abbr:"HepA",type:"不活化",color:"#4F46E5",icon:"🅰️",doses:[{d:1,age:"滿18個月",m:18,note:"⭐ 2025/1起新時程"},{d:2,age:"滿27個月",m:27,note:"⭐ 2025/1起新時程"}]},
+{id:"dtap4",name:"白喉破傷風百日咳+小兒麻痺",abbr:"DTaP-IPV追加",type:"不活化",color:"#6D28D9",icon:"💉",doses:[{d:1,age:"滿5歲~入學前",m:60,note:"若五合一第4劑已在4歲後接種可免"}]},
+{id:"flu",name:"流感疫苗",abbr:"Influenza",type:"不活化",color:"#0284C7",icon:"🌡️",doses:[{d:1,age:"滿6個月起/每年",m:6,note:"未滿9歲初次需2劑(間隔≥4週)"}]},
+{id:"ev71",name:"腸病毒A71型疫苗",abbr:"EV71",type:"不活化",color:"#E11D48",icon:"🦷",doses:[{d:1,age:"滿2個月起",m:2,note:"自費，每劑約3,600~4,300元"},{d:2,age:"第1劑後28天",m:3,note:"兩劑間隔≥28天，建議1歲前完成"}]},
+{id:"rotavirus",name:"輪狀病毒疫苗",abbr:"Rotavirus(口服)",type:"活性減毒",color:"#D946EF",icon:"🦠",special:"oral",doses:[{d:1,age:"出生2~6個月",m:2,note:"口服，目前自費，2027年納公費"}]},
+{id:"flumist",name:"鼻噴流感疫苗",abbr:"FluMist(活性減毒)",type:"活性減毒",color:"#F59E0B",icon:"👃",doses:[{d:1,age:"2~17歲/每年",m:24,note:"自費~1500元，2025年引進"}]}
+];
+
+const AG=[{l:"全部",mn:-1,mx:999},{l:"出生",mn:0,mx:0},{l:"1~2月",mn:1,mx:2},{l:"4~6月",mn:4,mx:6},{l:"12~15月",mn:12,mx:15},{l:"18~27月",mn:18,mx:27},{l:"5歲入學前",mn:48,mx:72}];
+
+const TL=[
+{age:"出生24hr內",items:[{v:"HepB 第1劑",c:"#2563EB",n:"HBsAg(+)母加打HBIG"}]},
+{age:"滿1個月",items:[{v:"HepB 第2劑",c:"#2563EB"}]},
+{age:"滿2個月",items:[{v:"五合一 第1劑",c:"#7C3AED"},{v:"PCV13 第1劑",c:"#0891B2"}]},
+{age:"滿4個月",items:[{v:"五合一 第2劑",c:"#7C3AED"},{v:"PCV13 第2劑",c:"#0891B2"}]},
+{age:"滿5個月",items:[{v:"卡介苗 BCG",c:"#B45309"}]},
+{age:"滿6個月",items:[{v:"HepB 第3劑",c:"#2563EB"},{v:"五合一 第3劑",c:"#7C3AED"},{v:"流感(開始)",c:"#0284C7"}]},
+{age:"滿12個月",items:[{v:"MMR 第1劑",c:"#DC2626"},{v:"水痘 第1劑",c:"#EA580C"},{v:"PCV13 第3劑",c:"#0891B2"}]},
+{age:"滿15個月",items:[{v:"日本腦炎 第1劑",c:"#059669"}]},
+{age:"滿18個月",items:[{v:"五合一 第4劑",c:"#7C3AED"},{v:"A肝 第1劑 ⭐新",c:"#4F46E5"}]},
+{age:"滿27個月",items:[{v:"日本腦炎 第2劑",c:"#059669"},{v:"A肝 第2劑 ⭐新",c:"#4F46E5"}]},
+{age:"5歲~入學前",items:[{v:"MMR 第2劑",c:"#DC2626"},{v:"DTaP-IPV 追加",c:"#6D28D9"}]}
+];
+
+const CE=[{age:"滿12個月",vx:["MMR第1劑","水痘第1劑","PCV13第3劑"]},{age:"滿18個月",vx:["五合一第4劑","A肝第1劑"]},{age:"滿27個月",vx:["日本腦炎第2劑","A肝第2劑"]},{age:"入學前",vx:["MMR第2劑","DTaP-IPV追加"]}];
+const IG=[{p:"一般肌注免疫球蛋白/HBIG",i:"≥ 3個月"},{p:"輸血/靜脈注射血液製品",i:"≥ 6個月"},{p:"高劑量IVIG(≥1g/kg)",i:"≥ 11個月"}];
+
+let state={tab:"schedule",search:"",typeF:"all",ageF:-1,expanded:null,checkA:"",checkB:""};
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+
+function coAdmin(a,b){
+  if(!a||!b||a.id===b.id)return null;
+  const bcg=v=>v.special==="bcg",oral=v=>v.special==="oral",live=v=>v.type==="活性減毒",inact=v=>v.type==="不活化";
+  if(bcg(a)||bcg(b))return{lv:"green",t:"✅ 可同時接種，也無間隔限制",d:"卡介苗(BCG)為皮內注射，可與任何疫苗同時或任意間隔接種，不受28天規則限制。"};
+  if(oral(a)||oral(b)){const o=oral(a)?b:a;return{lv:"green",t:"✅ 可同時接種，也無間隔限制",d:`口服輪狀病毒疫苗為經口投與(非注射)，不受28天間隔限制，可與${o.name}同時接種。`};}
+  if(inact(a)&&inact(b))return{lv:"green",t:"✅ 可同時接種，也無間隔限制",d:`${a.name}與${b.name}皆為不活化疫苗，可同日不同部位接種，非同日也完全沒有間隔限制。`};
+  if((inact(a)&&live(b))||(live(a)&&inact(b)))return{lv:"green",t:"✅ 可同時接種，也無間隔限制",d:"不活化疫苗與活性減毒疫苗之間沒有間隔限制，可同日不同部位接種，非同日也無需等待。"};
+  if(live(a)&&live(b))return{lv:"yellow",t:"⚠️ 可同日接種，但未同日須間隔≥28天",d:`${a.name}與${b.name}皆為活性減毒疫苗。可同一天在不同部位接種(距離≥2.5cm)，但若未同日施打，必須間隔至少28天。`};
+  return null;
+}
+
+function filterV(){
+  return V.filter(v=>{
+    if(state.search){const q=state.search.toLowerCase();if(!v.name.toLowerCase().includes(q)&&!v.abbr.toLowerCase().includes(q)&&!v.type.includes(q))return false;}
+    if(state.typeF!=="all"&&v.type!==state.typeF)return false;
+    if(state.ageF>=0){const g=AG.find(g=>g.mn===state.ageF);if(g&&!v.doses.some(d=>d.m>=g.mn&&d.m<=g.mx))return false;}
+    return true;
+  });
+}
+
+function renderSchedule(){
+  const fv=filterV();
+  let h=`<div class="search-box"><input type="text" placeholder="🔍 搜尋疫苗名稱 / 縮寫..." value="${esc(state.search)}" id="searchInput"></div>`;
+  h+=`<div class="filters">`;
+  [{v:"all",l:"全部"},{v:"不活化",l:"💙 不活化"},{v:"活性減毒",l:"🔶 活性減毒"}].forEach(f=>{
+    h+=`<button class="filter-btn${state.typeF===f.v?" active-green":""}" data-type="${f.v}">${f.l}</button>`;
+  });
+  h+=`</div><div class="age-filters">`;
+  AG.forEach(g=>{h+=`<button class="age-btn${state.ageF===g.mn?" active":""}" data-age="${g.mn}">${g.l}</button>`;});
+  h+=`</div>`;
+  if(!fv.length)h+=`<div class="empty">找不到符合條件的疫苗</div>`;
+  fv.forEach(v=>{
+    const exp=state.expanded===v.id;
+    h+=`<div class="vcard${exp?" expanded":""}" data-vid="${v.id}" style="border-color:${exp?v.color+"44":""}">`;
+    h+=`<div class="vcard-head"><div class="vcard-icon" style="background:${v.color}12;border:1px solid ${v.color}20">${v.icon}</div>`;
+    h+=`<div class="vcard-info"><div class="vcard-name">${esc(v.name)}</div><div class="vcard-tags">`;
+    h+=`<span class="tag-abbr">${esc(v.abbr)}</span><span class="tag-type ${v.type==="活性減毒"?"live":"inact"}">${v.type}</span><span class="tag-doses">${v.doses.length}劑</span>`;
+    h+=`</div></div><div class="arrow${exp?" open":""}">▼</div></div>`;
+    if(exp){
+      h+=`<div class="vcard-doses">`;
+      v.doses.forEach((d,i)=>{
+        const hl=d.note.startsWith("⭐")||d.note.startsWith("⚠️");
+        h+=`<div class="dose-row"><div class="dose-num" style="background:${v.color}10;border:2px solid ${v.color}55;color:${v.color}">${d.d}</div><div class="dose-info"><div class="dose-age">${esc(d.age)}</div>`;
+        if(d.note)h+=`<div class="dose-note${hl?" highlight":""}">${esc(d.note)}</div>`;
+        h+=`</div></div>`;
+      });
+      h+=`</div>`;
+    }
+    h+=`</div>`;
+  });
+  return h;
+}
+
+function renderChecker(){
+  let h=`<div style="background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--border);margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)">`;
+  h+=`<div style="font-size:16px;font-weight:800;margin-bottom:14px">🔍 疫苗同時接種查詢</div>`;
+  h+=`<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:600;color:var(--sub);margin-bottom:5px">疫苗 A</div><select class="sel" id="selA"><option value="">— 請選擇疫苗 —</option>`;
+  V.forEach(v=>{h+=`<option value="${v.id}"${state.checkA===v.id?" selected":""}>${v.icon} ${esc(v.name)}（${esc(v.abbr)}）[${v.type}]</option>`;});
+  h+=`</select></div><div style="text-align:center;font-size:20px;padding:4px 0;color:var(--light)">＋</div>`;
+  h+=`<div><div style="font-size:12px;font-weight:600;color:var(--sub);margin-bottom:5px">疫苗 B</div><select class="sel" id="selB"><option value="">— 請選擇疫苗 —</option>`;
+  V.filter(v=>v.id!==state.checkA).forEach(v=>{h+=`<option value="${v.id}"${state.checkB===v.id?" selected":""}>${v.icon} ${esc(v.name)}（${esc(v.abbr)}）[${v.type}]</option>`;});
+  h+=`</select></div></div>`;
+
+  const va=V.find(v=>v.id===state.checkA),vb=V.find(v=>v.id===state.checkB);
+  const r=coAdmin(va,vb);
+  if(r){
+    const gc=r.lv==="green";
+    h+=`<div class="result-box ${r.lv}"><div class="result-title" style="color:${gc?"#065F46":"#92400E"}">${r.t}</div><div class="result-detail" style="color:${gc?"#047857":"#B45309"}">${r.d}</div></div>`;
+    if(r.lv==="yellow"){
+      h+=`<div style="background:var(--redLight);border:1px solid #FCA5A5;border-radius:12px;padding:14px;margin-bottom:12px"><div style="font-size:13px;font-weight:700;color:var(--redText);margin-bottom:6px">⏱️ 28天間隔規則</div><div style="font-size:13px;color:#B91C1C;line-height:1.6">若兩支活性減毒疫苗無法同日接種，必須間隔至少 <strong>28天</strong> 後再施打第二支。</div></div>`;
+    }
+  }
+  if(!state.checkA&&!state.checkB){
+    h+=`<div style="background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--border)"><div style="font-size:14px;font-weight:700;margin-bottom:12px">💡 快速判斷原則</div>`;
+    [{p:"不活化 ＋ 不活化",r:"✅ 無限制",bg:"#ECFDF5",c:"#065F46"},{p:"不活化 ＋ 活性減毒",r:"✅ 無限制",bg:"#ECFDF5",c:"#065F46"},{p:"活性減毒 ＋ 活性減毒",r:"⚠️ 同日OK / 否則≥28天",bg:"var(--yellowLight)",c:"#92400E"}].forEach(r=>{
+      h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;background:${r.bg};margin-bottom:6px"><span style="font-size:13px;font-weight:600;color:${r.c}">${r.p}</span><span style="font-size:12px;font-weight:700;color:${r.c};white-space:nowrap">${r.r}</span></div>`;
+    });
+    h+=`<div style="font-size:14px;font-weight:700;margin-top:16px;margin-bottom:10px">🎯 常見可同日接種組合</div>`;
+    CE.forEach(ex=>{
+      h+=`<div style="background:var(--bg);border-radius:10px;padding:10px 12px;margin-bottom:6px;border:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:700;color:#B45309;background:var(--yellowLight);padding:2px 10px;border-radius:6px">${ex.age}</span><span style="font-size:16px">✅</span></div><div style="display:flex;gap:5px;flex-wrap:wrap">`;
+      ex.vx.forEach(vn=>{h+=`<span style="font-size:11px;font-weight:600;background:var(--card);border:1px solid var(--border);padding:3px 10px;border-radius:8px">${vn}</span>`;});
+      h+=`</div></div>`;
+    });
+    h+=`</div>`;
+  }
+  return h;
+}
+
+function renderRules(){
+  let h=`<div style="background:linear-gradient(135deg,#FEF3C7,#FFFBEB);border:1.5px solid #FCD34D;border-radius:14px;padding:16px;margin-bottom:14px"><div style="font-size:15px;font-weight:800;color:#92400E;margin-bottom:8px">⚡ 最重要的一條規則</div><div style="font-size:14px;color:#78350F;line-height:1.7">兩種<strong>活性減毒疫苗</strong>若未在<strong>同一天</strong>接種，必須間隔<strong style="font-size:18px;color:#B45309"> ≥28天</strong></div><div style="font-size:12px;color:#A16207;margin-top:6px">適用：MMR、水痘、日本腦炎(活性)、鼻噴流感(FluMist)</div></div>`;
+  h+=`<div style="font-size:15px;font-weight:800;margin-bottom:10px">📌 疫苗分類速查</div>`;
+  h+=`<div class="rule-card"><div class="rule-header" style="background:#EFF6FF"><div style="font-size:13px;font-weight:800;color:#1D4ED8">💙 不活化疫苗（無間隔限制）</div></div><div class="rule-body">`;
+  V.filter(v=>v.type==="不活化").forEach(v=>{h+=`<span class="rule-tag" style="background:#EFF6FF;color:#1E40AF;border:1px solid #93C5FD44">${v.icon} ${esc(v.name)}</span>`;});
+  h+=`</div></div>`;
+  h+=`<div class="rule-card"><div class="rule-header" style="background:#FFF7ED"><div style="font-size:13px;font-weight:800;color:#C2410C">🔶 活性減毒疫苗（注意28天規則）</div></div><div class="rule-body">`;
+  V.filter(v=>v.type==="活性減毒").forEach(v=>{h+=`<span class="rule-tag" style="background:#FFF7ED;color:#C2410C;border:1px solid #FDBA7444">${v.icon} ${esc(v.name)}${v.special?"⁺":""}</span>`;});
+  h+=`</div><div style="padding:6px 14px 10px;font-size:11px;color:var(--sub)">⁺ BCG(皮內注射)及輪狀(口服)為例外，不受28天限制</div></div>`;
+  h+=`<div style="font-size:15px;font-weight:800;margin-bottom:10px">🩸 免疫球蛋白 → 活性減毒疫苗間隔</div><div class="rule-card">`;
+  IG.forEach((r,i)=>{h+=`<div style="display:flex;justify-content:space-between;padding:12px 14px;align-items:center;${i<2?"border-bottom:1px solid var(--bg)":""}"><span style="font-size:13px;flex:1">${r.p}</span><span style="font-size:13px;font-weight:800;color:#DC2626;background:var(--redLight);padding:3px 10px;border-radius:8px;white-space:nowrap">${r.i}</span></div>`;});
+  h+=`</div>`;
+  h+=`<div style="background:var(--blueLight);border:1px solid #93C5FD;border-radius:12px;padding:12px 14px;margin-bottom:12px"><div style="font-size:13px;font-weight:700;color:var(--blueText);margin-bottom:4px">📏 寬限期</div><div style="font-size:13px;color:#1E40AF;line-height:1.6">各劑次最小間隔或最小接種年齡可提前 <strong>4天</strong>。提前 5天（含）以上該劑無效需重補。</div></div>`;
+  h+=`<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px"><div style="font-size:13px;font-weight:700;margin-bottom:4px">💡 同部位施打提醒</div><div style="font-size:13px;color:var(--sub);line-height:1.6">同日接種多支疫苗時，注射部位應相距 <strong>≥2.5cm</strong>，盡量打在不同側肢體。</div></div>`;
+  return h;
+}
+
+function renderTimeline(){
+  let h=`<div style="font-size:16px;font-weight:800;margin-bottom:14px">📅 按月齡接種總表</div>`;
+  TL.forEach((g,gi)=>{
+    h+=`<div class="tl-row"><div class="tl-dot-col"><div class="tl-dot"></div>${gi<TL.length-1?'<div class="tl-line"></div>':""}</div><div class="tl-card"><div class="tl-age">${g.age}</div><div class="tl-tags">`;
+    g.items.forEach(it=>{h+=`<span class="tl-tag" style="background:${it.c}0C;border:1px solid ${it.c}22;color:${it.c}">${it.v}</span>`;});
+    h+=`</div>`;
+    const notes=g.items.filter(it=>it.n).map(it=>it.n);
+    if(notes.length)h+=`<div style="font-size:11px;color:var(--sub);margin-top:5px">${esc(notes.join("；"))}</div>`;
+    h+=`</div></div>`;
+  });
+  h+=`<div style="background:#ECFDF5;border:1px solid #6EE7B7;border-radius:14px;padding:14px 16px;margin-top:16px"><div style="font-size:14px;font-weight:800;color:#065F46;margin-bottom:8px">🆕 2025~2027 重要政策</div><div style="font-size:13px;color:#047857;line-height:1.7">• 2025/1：A肝時程延後至18m/27m<br>• 2025/10起：流感疫苗全面改三價<br>• 2025起：自費鼻噴流感疫苗(FluMist)上市<br>• 2027年：輪狀病毒疫苗納入公費</div></div>`;
+  return h;
+}
+
+function render(){
+  const app=document.getElementById("app");
+  if(state.tab==="schedule")app.innerHTML=renderSchedule();
+  else if(state.tab==="checker")app.innerHTML=renderChecker();
+  else if(state.tab==="rules")app.innerHTML=renderRules();
+  else app.innerHTML=renderTimeline();
+  bind();
+}
+
+function bind(){
+  const si=document.getElementById("searchInput");
+  if(si){si.addEventListener("input",e=>{state.search=e.target.value;render();setTimeout(()=>{const el=document.getElementById("searchInput");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}},0)});}
+  document.querySelectorAll("[data-type]").forEach(b=>b.addEventListener("click",()=>{state.typeF=b.dataset.type;render();}));
+  document.querySelectorAll("[data-age]").forEach(b=>b.addEventListener("click",()=>{const v=parseInt(b.dataset.age);state.ageF=state.ageF===v?-1:v;render();}));
+  document.querySelectorAll("[data-vid]").forEach(c=>c.addEventListener("click",()=>{state.expanded=state.expanded===c.dataset.vid?null:c.dataset.vid;render();}));
+  const sa=document.getElementById("selA"),sb=document.getElementById("selB");
+  if(sa)sa.addEventListener("change",()=>{state.checkA=sa.value;render();});
+  if(sb)sb.addEventListener("change",()=>{state.checkB=sb.value;render();});
+}
+
+document.getElementById("tabs").addEventListener("click",e=>{
+  const btn=e.target.closest("button");if(!btn)return;
+  state.tab=btn.dataset.tab;
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===state.tab));
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
