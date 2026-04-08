@@ -145,16 +145,8 @@ function filterV(){
   });
 }
 
-function renderSchedule(){
-  const fv=filterV();
-  let h=`<div class="search-box"><input type="text" placeholder="🔍 搜尋疫苗名稱 / 縮寫..." value="${esc(state.search)}" id="searchInput"></div>`;
-  h+=`<div class="filters">`;
-  [{v:"all",l:"全部"},{v:"不活化",l:"💙 不活化"},{v:"活性減毒",l:"🔶 活性減毒"}].forEach(f=>{
-    h+=`<button class="filter-btn${state.typeF===f.v?" active-green":""}" data-type="${f.v}">${f.l}</button>`;
-  });
-  h+=`</div><div class="age-filters">`;
-  AG.forEach(g=>{h+=`<button class="age-btn${state.ageF===g.mn?" active":""}" data-age="${g.mn}">${g.l}</button>`;});
-  h+=`</div>`;
+function renderCardList(fv){
+  let h='';
   if(!fv.length)h+=`<div class="empty">找不到符合條件的疫苗</div>`;
   fv.forEach(v=>{
     const exp=state.expanded===v.id;
@@ -175,6 +167,22 @@ function renderSchedule(){
     }
     h+=`</div>`;
   });
+  return h;
+}
+
+function renderSchedule(){
+  const fv=filterV();
+  let h=`<div class="search-box"><input type="text" placeholder="🔍 搜尋疫苗名稱 / 縮寫..." value="${esc(state.search)}" id="searchInput"></div>`;
+  h+=`<div class="filters">`;
+  [{v:"all",l:"全部"},{v:"不活化",l:"💙 不活化"},{v:"活性減毒",l:"🔶 活性減毒"}].forEach(f=>{
+    h+=`<button class="filter-btn${state.typeF===f.v?" active-green":""}" data-type="${f.v}">${f.l}</button>`;
+  });
+  h+=`</div><div class="age-filters">`;
+  AG.forEach(g=>{h+=`<button class="age-btn${state.ageF===g.mn?" active":""}" data-age="${g.mn}">${g.l}</button>`;});
+  h+=`</div>`;
+  h+=`<div id="vcardList">`;
+  h+=renderCardList(fv);
+  h+=`</div>`;
   return h;
 }
 
@@ -244,8 +252,12 @@ function renderTimeline(){
   return h;
 }
 
-function render(){
+function render(searchOnly){
   const app=document.getElementById("app");
+  if(searchOnly&&state.tab==="schedule"){
+    const list=document.getElementById("vcardList");
+    if(list){list.innerHTML=renderCardList(filterV());bindCards();return;}
+  }
   if(state.tab==="schedule")app.innerHTML=renderSchedule();
   else if(state.tab==="checker")app.innerHTML=renderChecker();
   else if(state.tab==="rules")app.innerHTML=renderRules();
@@ -253,12 +265,21 @@ function render(){
   bind();
 }
 
+function bindCards(){
+  document.querySelectorAll("[data-vid]").forEach(c=>c.addEventListener("click",()=>{state.expanded=state.expanded===c.dataset.vid?null:c.dataset.vid;render(true);}));
+}
+
+let _st=null,_composing=false;
 function bind(){
   const si=document.getElementById("searchInput");
-  if(si){let composing=false;si.addEventListener("compositionstart",()=>{composing=true});si.addEventListener("compositionend",e=>{composing=false;state.search=e.target.value;render();setTimeout(()=>{const el=document.getElementById("searchInput");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}},0)});si.addEventListener("input",e=>{if(composing)return;state.search=e.target.value;render();setTimeout(()=>{const el=document.getElementById("searchInput");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}},0)});}
+  if(si){
+    si.addEventListener("compositionstart",()=>{_composing=true;});
+    si.addEventListener("compositionend",e=>{_composing=false;state.search=e.target.value;render(true);});
+    si.addEventListener("input",e=>{if(_composing)return;clearTimeout(_st);_st=setTimeout(()=>{state.search=e.target.value;render(true);},200);});
+  }
   document.querySelectorAll("[data-type]").forEach(b=>b.addEventListener("click",()=>{state.typeF=b.dataset.type;render();}));
   document.querySelectorAll("[data-age]").forEach(b=>b.addEventListener("click",()=>{const v=parseInt(b.dataset.age);state.ageF=state.ageF===v?-1:v;render();}));
-  document.querySelectorAll("[data-vid]").forEach(c=>c.addEventListener("click",()=>{state.expanded=state.expanded===c.dataset.vid?null:c.dataset.vid;render();}));
+  bindCards();
   const sa=document.getElementById("selA"),sb=document.getElementById("selB");
   if(sa)sa.addEventListener("change",()=>{state.checkA=sa.value;render();});
   if(sb)sb.addEventListener("change",()=>{state.checkB=sb.value;render();});
