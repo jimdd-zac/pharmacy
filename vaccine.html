@@ -255,7 +255,7 @@ function render(){
 
 function bind(){
   const si=document.getElementById("searchInput");
-  if(si){si.addEventListener("input",e=>{state.search=e.target.value;render();setTimeout(()=>{const el=document.getElementById("searchInput");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}},0)});}
+  if(si){let composing=false;si.addEventListener("compositionstart",()=>{composing=true});si.addEventListener("compositionend",e=>{composing=false;state.search=e.target.value;render();setTimeout(()=>{const el=document.getElementById("searchInput");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}},0)});si.addEventListener("input",e=>{if(composing)return;state.search=e.target.value;render();setTimeout(()=>{const el=document.getElementById("searchInput");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}},0)});}
   document.querySelectorAll("[data-type]").forEach(b=>b.addEventListener("click",()=>{state.typeF=b.dataset.type;render();}));
   document.querySelectorAll("[data-age]").forEach(b=>b.addEventListener("click",()=>{const v=parseInt(b.dataset.age);state.ageF=state.ageF===v?-1:v;render();}));
   document.querySelectorAll("[data-vid]").forEach(c=>c.addEventListener("click",()=>{state.expanded=state.expanded===c.dataset.vid?null:c.dataset.vid;render();}));
