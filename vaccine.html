@@ -172,7 +172,7 @@ function renderCardList(fv){
 
 function renderSchedule(){
   const fv=filterV();
-  let h=`<div class="search-box"><input type="text" placeholder="🔍 搜尋疫苗名稱 / 縮寫..." value="${esc(state.search)}" id="searchInput"></div>`;
+  let h=`<div class="search-box" style="display:flex;gap:8px;align-items:center"><input type="search" placeholder="搜尋疫苗名稱 / 縮寫..." value="${esc(state.search)}" id="searchInput" style="flex:1"><button id="searchBtn" style="padding:10px 16px;border-radius:8px;border:none;background:#1B6B4A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">搜尋</button>${state.search?'<button id="clearBtn" style="padding:10px 12px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;cursor:pointer;font-family:inherit">✕</button>':''}</div>`;
   h+=`<div class="filters">`;
   [{v:"all",l:"全部"},{v:"不活化",l:"💙 不活化"},{v:"活性減毒",l:"🔶 活性減毒"}].forEach(f=>{
     h+=`<button class="filter-btn${state.typeF===f.v?" active-green":""}" data-type="${f.v}">${f.l}</button>`;
@@ -269,20 +269,26 @@ function bindCards(){
   document.querySelectorAll("[data-vid]").forEach(c=>c.addEventListener("click",()=>{state.expanded=state.expanded===c.dataset.vid?null:c.dataset.vid;render(true);}));
 }
 
-let _st=null,_composing=false;
+function doSearch(){
+  const si=document.getElementById("searchInput");
+  if(si){state.search=si.value;}
+  render(true);
+}
 function bind(){
   const si=document.getElementById("searchInput");
   if(si){
-    si.addEventListener("compositionstart",()=>{_composing=true;});
-    si.addEventListener("compositionend",e=>{_composing=false;state.search=e.target.value;render(true);});
-    si.addEventListener("input",e=>{if(_composing)return;clearTimeout(_st);_st=setTimeout(()=>{state.search=e.target.value;render(true);},200);});
+    si.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();doSearch();}});
   }
+  const sb=document.getElementById("searchBtn");
+  if(sb)sb.addEventListener("click",doSearch);
+  const cb=document.getElementById("clearBtn");
+  if(cb)cb.addEventListener("click",()=>{state.search="";render();});
   document.querySelectorAll("[data-type]").forEach(b=>b.addEventListener("click",()=>{state.typeF=b.dataset.type;render();}));
   document.querySelectorAll("[data-age]").forEach(b=>b.addEventListener("click",()=>{const v=parseInt(b.dataset.age);state.ageF=state.ageF===v?-1:v;render();}));
   bindCards();
-  const sa=document.getElementById("selA"),sb=document.getElementById("selB");
-  if(sa)sa.addEventListener("change",()=>{state.checkA=sa.value;render();});
-  if(sb)sb.addEventListener("change",()=>{state.checkB=sb.value;render();});
+  const sa2=document.getElementById("selA"),sb2=document.getElementById("selB");
+  if(sa2)sa2.addEventListener("change",()=>{state.checkA=sa2.value;render();});
+  if(sb2)sb2.addEventListener("change",()=>{state.checkB=sb2.value;render();});
 }
 
 document.getElementById("tabs").addEventListener("click",e=>{
