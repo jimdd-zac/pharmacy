@@ -74,7 +74,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none;color:#1C1C1E
 <script>
 const RX_KEY='pharmacy-v2',ORD_KEY='drug-orders-v1';
 const SYNC_URL='https://script.google.com/macros/s/AKfycbyvKNzCJLJmHUSKFg6XJquFFxhlNdhcOZNSQhQUiREuoZIT9Up8TqZXd1QyV9Cyu5n6_A/exec';
-async function rxSync(){const p=loadRx().filter(x=>x.prescriptions?.some(rx=>rx.isChronic));if(!p.length){showToast('沒有慢箋病人可同步');return;}showToast('📡 同步中…');try{const url=SYNC_URL+'?data='+encodeURIComponent(JSON.stringify(p));const img=new Image();img.src=url;await new Promise((res)=>{img.onload=res;img.onerror=res;setTimeout(res,3000);});showToast('✅ 已同步 '+p.length+' 位病人');}catch(e){showToast('❌ 同步失敗');}}
+async function rxSync(){const p=loadRx().filter(x=>x.prescriptions?.some(rx=>rx.isChronic));if(!p.length){showToast('沒有慢箋病人可同步');return;}showToast('📡 同步中…');try{const ok=navigator.sendBeacon(SYNC_URL,JSON.stringify(p));if(ok)showToast('✅ 已同步 '+p.length+' 位病人');else showToast('❌ 同步失敗');}catch(e){showToast('❌ 同步失敗');}}
 function loadRx(){try{return JSON.parse(localStorage.getItem(RX_KEY))||[];}catch{return[];}}
 function saveRx(a){localStorage.setItem(RX_KEY,JSON.stringify(a));}
 function loadOrd(){try{return JSON.parse(localStorage.getItem(ORD_KEY))||[];}catch{return[];}}
